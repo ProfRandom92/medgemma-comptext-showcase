@@ -16,7 +16,11 @@ PROTECTED_BRANCH="main"
 echo "=== Branch Cleanup Script ==="
 echo ""
 
-# Step 1: Checkout main and pull latest
+# Step 1: Check for uncommitted changes, then checkout main and pull latest
+if ! git diff --quiet || ! git diff --cached --quiet; then
+  echo "ERROR: You have uncommitted changes. Please commit or stash them first."
+  exit 1
+fi
 echo ">> Checking out '${PROTECTED_BRANCH}' and pulling latest..."
 git checkout "${PROTECTED_BRANCH}"
 git pull origin "${PROTECTED_BRANCH}"
@@ -33,9 +37,12 @@ LOCAL_BRANCHES=$(git branch | grep -v "^\*\?\s*${PROTECTED_BRANCH}$" | sed 's/^[
 if [ -z "${LOCAL_BRANCHES}" ]; then
   echo "   No local branches to delete."
 else
-  for branch in ${LOCAL_BRANCHES}; do
-    echo "   Deleting local branch: ${branch}"
-    git branch -D "${branch}"
+  echo "${LOCAL_BRANCHES}" | while IFS= read -r branch; do
+    branch=$(echo "${branch}" | xargs)
+    if [ -n "${branch}" ]; then
+      echo "   Deleting local branch: ${branch}"
+      git branch -D "${branch}"
+    fi
   done
 fi
 echo ""
@@ -47,9 +54,12 @@ REMOTE_BRANCHES=$(git ls-remote --heads origin | awk '{print $2}' | sed 's|refs/
 if [ -z "${REMOTE_BRANCHES}" ]; then
   echo "   No remote branches to delete."
 else
-  for branch in ${REMOTE_BRANCHES}; do
-    echo "   Deleting remote branch: origin/${branch}"
-    git push origin --delete "${branch}"
+  echo "${REMOTE_BRANCHES}" | while IFS= read -r branch; do
+    branch=$(echo "${branch}" | xargs)
+    if [ -n "${branch}" ]; then
+      echo "   Deleting remote branch: origin/${branch}"
+      git push origin --delete "${branch}"
+    fi
   done
 fi
 echo ""
