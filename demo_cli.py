@@ -1,7 +1,10 @@
 """MedGemma x CompText — Interactive CLI Demo.
 
-Run with:
-    python demo_cli.py
+# Install dependencies
+pip install -r requirements.txt
+
+# Run the interactive demo
+python demo_cli.py
 """
 
 import json
