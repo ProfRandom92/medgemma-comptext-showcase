@@ -2,3 +2,4 @@ rich
 pydantic
 requests
 pytest
+streamlit

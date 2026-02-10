@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import re
 
+from src.core.codex import CodexRouter
+
 
 class CompTextProtocol:
     """Simulates the CompText v5 compression engine.
@@ -37,6 +39,9 @@ class CompTextProtocol:
         re.IGNORECASE,
     )
 
+    def __init__(self) -> None:
+        self._router = CodexRouter()
+
     def compress(self, raw_text: str) -> dict:
         """Compress raw clinical text into a structured JSON representation.
 
@@ -63,6 +68,7 @@ class CompTextProtocol:
                 "temp": float(temp) if temp else None,
             },
             "medication": medication,
+            **self._codex_fields(raw_text),
         }
 
     @staticmethod
@@ -70,3 +76,16 @@ class CompTextProtocol:
         """Return the first capture group match or None."""
         match = pattern.search(text)
         return match.group(1).strip() if match else None
+
+    def _codex_fields(self, raw_text: str) -> dict:
+        """Return meta and specialist fields from the active codex module."""
+        module = self._router.route(raw_text)
+        if module is None:
+            return {
+                "meta": {"active_protocol": "General"},
+                "specialist_data": {},
+            }
+        return {
+            "meta": {"active_protocol": module.protocol_label},
+            "specialist_data": module.extract(raw_text),
+        }

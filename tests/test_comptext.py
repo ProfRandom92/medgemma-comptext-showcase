@@ -1,8 +1,14 @@
-"""Tests for CompTextProtocol, NurseAgent, and DoctorAgent."""
+"""Tests for CompTextProtocol, NurseAgent, DoctorAgent, and Codex system."""
 
 import pytest
 
 from src.core.comptext import CompTextProtocol
+from src.core.codex import (
+    CardiologyCodex,
+    ClinicalModule,
+    CodexRouter,
+    RespiratoryCodex,
+)
 from src.agents.nurse_agent import NurseAgent
 from src.agents.doctor_agent import DoctorAgent
 
@@ -98,3 +104,102 @@ class TestDoctorAgent:
 
         assert isinstance(result, str)
         assert len(result) > 0
+
+
+# ---------------------------------------------------------------------------
+# Codex System
+# ---------------------------------------------------------------------------
+
+class TestCodexRouter:
+    def setup_method(self):
+        self.router = CodexRouter()
+
+    def test_routes_chest_pain_to_cardiology(self):
+        module = self.router.route("Patient presents with chest pain.")
+        assert module is not None
+        assert module.name == "Cardiology"
+
+    def test_routes_heart_to_cardiology(self):
+        module = self.router.route("Heart rate elevated, palpitations noted.")
+        assert module is not None
+        assert module.name == "Cardiology"
+
+    def test_routes_asthma_to_respiratory(self):
+        module = self.router.route("Patient has asthma, wheezing on exam.")
+        assert module is not None
+        assert module.name == "Respiratory"
+
+    def test_routes_breath_to_respiratory(self):
+        module = self.router.route("Shortness of breath since yesterday.")
+        assert module is not None
+        assert module.name == "Respiratory"
+
+    def test_returns_none_for_unmatched(self):
+        module = self.router.route("Patient has a headache.")
+        assert module is None
+
+
+class TestCardiologyCodex:
+    def setup_method(self):
+        self.codex = CardiologyCodex()
+
+    def test_extracts_radiation(self):
+        result = self.codex.extract("Chest pain radiating to left arm.")
+        assert result["radiation"] is not None
+        assert "left arm" in result["radiation"]
+
+    def test_extracts_pain_quality(self):
+        result = self.codex.extract("Chest pain is sharp and constant.")
+        assert result["pain_quality"] == "sharp"
+
+    def test_returns_none_when_no_match(self):
+        result = self.codex.extract("Heart rate elevated.")
+        assert result["radiation"] is None
+        assert result["pain_quality"] is None
+
+
+class TestRespiratoryCodex:
+    def setup_method(self):
+        self.codex = RespiratoryCodex()
+
+    def test_extracts_triggers(self):
+        result = self.codex.extract("Asthma triggered by dust exposure.")
+        assert result["triggers"] is not None
+        assert "dust" in result["triggers"]
+
+    def test_extracts_breath_sounds(self):
+        result = self.codex.extract("Breath sounds: diminished on left side.")
+        assert result["breath_sounds"] == "diminished"
+
+    def test_returns_none_when_no_match(self):
+        result = self.codex.extract("Patient has wheezing.")
+        assert result["triggers"] is None
+        assert result["breath_sounds"] is None
+
+
+class TestCompTextProtocolMeta:
+    def setup_method(self):
+        self.protocol = CompTextProtocol()
+
+    def test_compress_includes_meta_for_cardiology(self):
+        raw = "Chief complaint: chest pain. HR 110."
+        result = self.protocol.compress(raw)
+        assert "meta" in result
+        assert "Cardiology" in result["meta"]["active_protocol"]
+
+    def test_compress_includes_meta_for_respiratory(self):
+        raw = "Patient has asthma. HR 90."
+        result = self.protocol.compress(raw)
+        assert "meta" in result
+        assert "Respiratory" in result["meta"]["active_protocol"]
+
+    def test_compress_includes_general_when_no_match(self):
+        raw = "Patient has a headache. HR 72."
+        result = self.protocol.compress(raw)
+        assert result["meta"]["active_protocol"] == "General"
+
+    def test_compress_includes_specialist_data(self):
+        raw = "Chest pain radiating to left arm. HR 110."
+        result = self.protocol.compress(raw)
+        assert "specialist_data" in result
+        assert "radiation" in result["specialist_data"]
