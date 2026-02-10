@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 from typing import Any
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class Vitals(BaseModel):
@@ -20,10 +20,10 @@ class PatientState(BaseModel):
     """Compressed patient state produced by the CompText protocol."""
 
     chief_complaint: str | None = None
-    vitals: Vitals = Vitals()
+    vitals: Vitals = Field(default_factory=Vitals)
     medication: str | None = None
-    meta: dict[str, Any] = {}
-    specialist_data: dict[str, Any] = {}
+    meta: dict[str, Any] = Field(default_factory=dict)
+    specialist_data: dict[str, Any] = Field(default_factory=dict)
 
     def to_compressed_json(self) -> str:
         """Dump the model as JSON, excluding None fields for high compression."""
