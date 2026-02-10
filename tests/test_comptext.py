@@ -185,13 +185,13 @@ class TestCompTextProtocolMeta:
         raw = "Chief complaint: chest pain. HR 110."
         result = self.protocol.compress(raw)
         assert "meta" in result
-        assert "Cardiology" in result["meta"]["active_protocol"]
+        assert result["meta"]["active_protocol"] == CardiologyCodex().protocol_label
 
     def test_compress_includes_meta_for_respiratory(self):
         raw = "Patient has asthma. HR 90."
         result = self.protocol.compress(raw)
         assert "meta" in result
-        assert "Respiratory" in result["meta"]["active_protocol"]
+        assert result["meta"]["active_protocol"] == RespiratoryCodex().protocol_label
 
     def test_compress_includes_general_when_no_match(self):
         raw = "Patient has a headache. HR 72."
