@@ -112,6 +112,86 @@ class RespiratoryCodex(ClinicalModule):
         return match.group(1).strip() if match else None
 
 
+class NeurologyCodex(ClinicalModule):
+    """Neurology-specific clinical module."""
+
+    _TIME_LAST_KNOWN_WELL_PATTERN = re.compile(
+        r"(?:last\s+(?:known|seen)\s+(?:well|normal)\s*)(?:at\s+|was\s+)?(\d+\s*(?:hours?|minutes?|mins?|hrs?)\s*ago|\d{1,2}:\d{2})",
+        re.IGNORECASE,
+    )
+    _SYMPTOMS_SIDE_PATTERN = re.compile(
+        r"\b(left|right)\b",
+        re.IGNORECASE,
+    )
+
+    @property
+    def name(self) -> str:
+        return "Neurology"
+
+    @property
+    def protocol_label(self) -> str:
+        return "\U0001f9e0 Neurology Protocol"
+
+    @property
+    def keywords(self) -> list[str]:
+        return ["stroke", "slurred", "weakness", "numbness", "face"]
+
+    def extract(self, text: str) -> dict:
+        time_last_known_well = self._extract_first(
+            self._TIME_LAST_KNOWN_WELL_PATTERN, text
+        )
+        side_match = self._SYMPTOMS_SIDE_PATTERN.search(text)
+        symptoms_side = side_match.group(1).lower() if side_match else None
+        return {
+            "time_last_known_well": time_last_known_well,
+            "symptoms_side": symptoms_side,
+        }
+
+    @staticmethod
+    def _extract_first(pattern: re.Pattern, text: str) -> str | None:
+        match = pattern.search(text)
+        return match.group(1).strip() if match else None
+
+
+class TraumaCodex(ClinicalModule):
+    """Trauma-specific clinical module."""
+
+    _MECHANISM_PATTERN = re.compile(
+        r"(?:fall\s+from|hit\s+by|struck\s+by|crash\s+into|involved\s+in)\s+(.+?)(?:\.|,|;|$)",
+        re.IGNORECASE,
+    )
+    _VISIBLE_INJURY_PATTERN = re.compile(
+        r"(bone\s+exposed|laceration|open\s+wound|deformity|swelling|bruising|abrasion)",
+        re.IGNORECASE,
+    )
+
+    @property
+    def name(self) -> str:
+        return "Trauma"
+
+    @property
+    def protocol_label(self) -> str:
+        return "\U0001f691 Trauma Protocol"
+
+    @property
+    def keywords(self) -> list[str]:
+        return ["fall", "fell", "accident", "crash", "fracture", "bleed", "trauma"]
+
+    def extract(self, text: str) -> dict:
+        mechanism = self._extract_first(self._MECHANISM_PATTERN, text)
+        injury_match = self._VISIBLE_INJURY_PATTERN.search(text)
+        visible_injury = injury_match.group(1).strip() if injury_match else None
+        return {
+            "mechanism_of_injury": mechanism,
+            "visible_injury": visible_injury,
+        }
+
+    @staticmethod
+    def _extract_first(pattern: re.Pattern, text: str) -> str | None:
+        match = pattern.search(text)
+        return match.group(1).strip() if match else None
+
+
 class CodexRouter:
     """Selects the appropriate clinical module based on input text."""
 
@@ -119,6 +199,8 @@ class CodexRouter:
         self._modules: list[ClinicalModule] = [
             CardiologyCodex(),
             RespiratoryCodex(),
+            NeurologyCodex(),
+            TraumaCodex(),
         ]
 
     def route(self, text: str) -> ClinicalModule | None:

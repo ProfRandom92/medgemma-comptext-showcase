@@ -9,6 +9,7 @@ import tiktoken
 
 from src.agents.doctor_agent import DoctorAgent
 from src.agents.nurse_agent import NurseAgent
+from src.agents.triage_agent import TriageAgent
 
 _enc = tiktoken.get_encoding("cl100k_base")
 
@@ -39,8 +40,17 @@ if st.button("Compress & Analyse", type="primary") and raw_text.strip():
         st.error(f"🚨 ACTIVE CODEX: {protocol}")
     elif "Respiratory" in protocol:
         st.warning(f"🚨 ACTIVE CODEX: {protocol}")
+    elif "Neurology" in protocol:
+        st.error(f"🚨 ACTIVE CODEX: {protocol}")
+    elif "Trauma" in protocol:
+        st.error(f"🚨 ACTIVE CODEX: {protocol}")
     else:
         st.info(f"ℹ️ ACTIVE CODEX: {protocol}")
+
+    # --- Triage Priority ---
+    triage_agent = TriageAgent()
+    priority_score = triage_agent.assess(patient_state)
+    st.metric("Triage Priority", priority_score)
 
     # --- Results columns ---
     col1, col2 = st.columns(2)
