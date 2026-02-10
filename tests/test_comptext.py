@@ -9,9 +9,12 @@ from src.core.codex import (
     CardiologyCodex,
     ClinicalModule,
     CodexRouter,
+    NeurologyCodex,
     RespiratoryCodex,
+    TraumaCodex,
 )
 from src.core.models import PatientState, Vitals
+from src.agents.triage_agent import TriageAgent
 from src.agents.nurse_agent import NurseAgent
 from src.agents.doctor_agent import DoctorAgent
 
@@ -141,6 +144,16 @@ class TestCodexRouter:
         module = self.router.route("Patient has a headache.")
         assert module is None
 
+    def test_routes_stroke_to_neurology(self):
+        module = self.router.route("Patient had a stroke, left side weakness.")
+        assert module is not None
+        assert module.name == "Neurology"
+
+    def test_routes_fall_to_trauma(self):
+        module = self.router.route("Patient fell from ladder, has bone exposed.")
+        assert module is not None
+        assert module.name == "Trauma"
+
 
 class TestCardiologyCodex:
     def setup_method(self):
@@ -261,3 +274,110 @@ class TestPatientStateModel:
         assert isinstance(d, dict)
         assert d["chief_complaint"] == "cough"
         assert d["vitals"]["hr"] == 90
+
+
+# ---------------------------------------------------------------------------
+# Neurology Codex
+# ---------------------------------------------------------------------------
+
+class TestNeurologyCodex:
+    def setup_method(self):
+        self.codex = NeurologyCodex()
+
+    def test_extracts_time_last_known_well(self):
+        result = self.codex.extract(
+            "Patient had a stroke. Last known well 2 hours ago."
+        )
+        assert result["time_last_known_well"] is not None
+        assert "2 hours ago" in result["time_last_known_well"]
+
+    def test_extracts_symptoms_side(self):
+        result = self.codex.extract("Left side weakness and numbness.")
+        assert result["symptoms_side"] == "left"
+
+    def test_returns_none_when_no_match(self):
+        result = self.codex.extract("Patient has slurred speech.")
+        assert result["time_last_known_well"] is None
+
+
+# ---------------------------------------------------------------------------
+# Trauma Codex
+# ---------------------------------------------------------------------------
+
+class TestTraumaCodex:
+    def setup_method(self):
+        self.codex = TraumaCodex()
+
+    def test_extracts_mechanism_of_injury(self):
+        result = self.codex.extract("Patient fall from ladder, bone exposed.")
+        assert result["mechanism_of_injury"] is not None
+        assert "ladder" in result["mechanism_of_injury"]
+
+    def test_extracts_visible_injury(self):
+        result = self.codex.extract("Patient has bone exposed after accident.")
+        assert result["visible_injury"] == "bone exposed"
+
+    def test_returns_none_when_no_match(self):
+        result = self.codex.extract("Patient involved in a crash.")
+        assert result["visible_injury"] is None
+
+
+# ---------------------------------------------------------------------------
+# Triage Agent
+# ---------------------------------------------------------------------------
+
+class TestTriageAgent:
+    def setup_method(self):
+        self.agent = TriageAgent()
+
+    def test_critical_for_cardiology_protocol(self):
+        state = PatientState(
+            meta={"active_protocol": "\U0001fac0 Cardiology Protocol"},
+        )
+        assert "P1 - CRITICAL" in self.agent.assess(state)
+
+    def test_critical_for_trauma_protocol(self):
+        state = PatientState(
+            meta={"active_protocol": "\U0001f691 Trauma Protocol"},
+        )
+        assert "P1 - CRITICAL" in self.agent.assess(state)
+
+    def test_critical_for_neurology_protocol(self):
+        state = PatientState(
+            meta={"active_protocol": "\U0001f9e0 Neurology Protocol"},
+        )
+        assert "P1 - CRITICAL" in self.agent.assess(state)
+
+    def test_critical_for_high_hr(self):
+        state = PatientState(
+            vitals=Vitals(hr=130),
+            meta={"active_protocol": "General"},
+        )
+        assert "P1 - CRITICAL" in self.agent.assess(state)
+
+    def test_critical_for_high_bp(self):
+        state = PatientState(
+            vitals=Vitals(bp="170/95"),
+            meta={"active_protocol": "General"},
+        )
+        assert "P1 - CRITICAL" in self.agent.assess(state)
+
+    def test_urgent_for_respiratory_protocol(self):
+        state = PatientState(
+            meta={"active_protocol": "\U0001fab7 Respiratory Protocol"},
+        )
+        assert "P2 - URGENT" in self.agent.assess(state)
+
+    def test_urgent_for_high_temp(self):
+        state = PatientState(
+            vitals=Vitals(temp=39.5),
+            meta={"active_protocol": "General"},
+        )
+        assert "P2 - URGENT" in self.agent.assess(state)
+
+    def test_standard_for_normal(self):
+        state = PatientState(
+            vitals=Vitals(hr=72, bp="120/80", temp=36.6),
+            meta={"active_protocol": "General"},
+        )
+        assert "P3 - STANDARD" in self.agent.assess(state)
