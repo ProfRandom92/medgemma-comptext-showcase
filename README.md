@@ -19,7 +19,7 @@ this architecture delivers:
 | Benefit | Detail |
 |---|---|
 | 🔒 **Privacy by Design** | Raw text never leaves the device; only anonymised JSON is sent to the model. |
-| ⚡ **94 % Token Reduction** | Fewer tokens → faster inference, lower cost, and the ability to run on constrained hardware. |
+| ⚡ **94% Token Reduction** | Fewer tokens → faster inference, lower cost, and the ability to run on constrained hardware. |
 | 🤖 **Multi-Agent Workflow** | A *Nurse Agent* handles intake & compression; a *Doctor Agent* handles diagnosis — each with a single responsibility. |
 | 🏥 **Edge-Ready** | Small enough to run on tablets in rural clinics or field hospitals. |
 

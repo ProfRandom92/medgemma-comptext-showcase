@@ -1,5 +1,7 @@
 """CompText Protocol - Privacy-first patient data compression engine (v5 mock)."""
 
+from __future__ import annotations
+
 import re
 
 
