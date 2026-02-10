@@ -4,12 +4,13 @@ Run with:
     streamlit run dashboard.py
 """
 
-import json
-
 import streamlit as st
+import tiktoken
 
 from src.agents.doctor_agent import DoctorAgent
 from src.agents.nurse_agent import NurseAgent
+
+_enc = tiktoken.get_encoding("cl100k_base")
 
 st.set_page_config(page_title="MedGemma x CompText", page_icon="🏥", layout="wide")
 
@@ -28,9 +29,10 @@ raw_text = st.text_area(
 if st.button("Compress & Analyse", type="primary") and raw_text.strip():
     nurse = NurseAgent()
     patient_state = nurse.intake(raw_text)
+    state_dict = patient_state.model_dump()
 
     # --- Active Codex Banner ---
-    meta = patient_state.get("meta", {})
+    meta = patient_state.meta
     protocol = meta.get("active_protocol", "General")
 
     if "Cardiology" in protocol:
@@ -45,21 +47,21 @@ if st.button("Compress & Analyse", type="primary") and raw_text.strip():
 
     with col1:
         st.subheader("Compressed Patient State")
-        st.json(patient_state)
+        st.json(state_dict)
 
     with col2:
         st.subheader("Doctor Agent Response")
         doctor = DoctorAgent()
-        recommendation = doctor.diagnose(patient_state)
+        recommendation = doctor.diagnose(state_dict)
         st.code(recommendation, language="text")
 
-    # --- Token comparison ---
-    raw_tokens = max(1, len(raw_text) // 4)
-    compressed_json = json.dumps(patient_state, indent=2)
-    compressed_tokens = max(1, len(compressed_json) // 4)
+    # --- Token comparison (tiktoken cl100k_base) ---
+    raw_tokens = max(1, len(_enc.encode(raw_text)))
+    compressed_json = patient_state.to_compressed_json()
+    compressed_tokens = max(1, len(_enc.encode(compressed_json)))
 
     st.divider()
     m1, m2, m3 = st.columns(3)
-    m1.metric("Raw Tokens", raw_tokens)
-    m2.metric("Compressed Tokens", compressed_tokens)
+    m1.metric("Raw Tokens (tiktoken)", raw_tokens)
+    m2.metric("Compressed Tokens (tiktoken)", compressed_tokens)
     m3.metric("Reduction", f"{100 - (compressed_tokens / raw_tokens * 100):.0f}%")

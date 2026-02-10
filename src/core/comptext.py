@@ -5,6 +5,7 @@ from __future__ import annotations
 import re
 
 from src.core.codex import CodexRouter
+from src.core.models import PatientState, Vitals
 
 
 class CompTextProtocol:
@@ -42,14 +43,14 @@ class CompTextProtocol:
     def __init__(self) -> None:
         self._router = CodexRouter()
 
-    def compress(self, raw_text: str) -> dict:
-        """Compress raw clinical text into a structured JSON representation.
+    def compress(self, raw_text: str) -> PatientState:
+        """Compress raw clinical text into a structured PatientState model.
 
         Args:
             raw_text: Free-form clinical text containing patient information.
 
         Returns:
-            A dictionary with extracted clinical fields.
+            A PatientState Pydantic model with extracted clinical fields.
         """
         chief_complaint = (
             self._extract_first(self._CHIEF_COMPLAINT_PRIMARY, raw_text)
@@ -60,16 +61,19 @@ class CompTextProtocol:
         temp = self._extract_first(self._TEMP_PATTERN, raw_text)
         medication = self._extract_first(self._MEDICATION_PATTERN, raw_text)
 
-        return {
-            "chief_complaint": chief_complaint,
-            "vitals": {
-                "hr": int(hr) if hr else None,
-                "bp": bp,
-                "temp": float(temp) if temp else None,
-            },
-            "medication": medication,
-            **self._codex_fields(raw_text),
-        }
+        codex = self._codex_fields(raw_text)
+
+        return PatientState(
+            chief_complaint=chief_complaint,
+            vitals=Vitals(
+                hr=int(hr) if hr else None,
+                bp=bp,
+                temp=float(temp) if temp else None,
+            ),
+            medication=medication,
+            meta=codex["meta"],
+            specialist_data=codex["specialist_data"],
+        )
 
     @staticmethod
     def _extract_first(pattern: re.Pattern, text: str) -> str | None:
