@@ -20,6 +20,9 @@ def compress_content(text: str, *, mode: str = "medical_safe") -> str:
     if mode == "medical_safe":
         strategy = MedicalKVTCStrategy()
     else:
-        strategy = MedicalKVTCStrategy()
+        raise ValueError(
+            f"Unsupported compression mode: {mode!r}. "
+            "Currently only 'medical_safe' is supported."
+        )
 
     return strategy.compress(text)

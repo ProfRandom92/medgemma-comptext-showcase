@@ -249,9 +249,9 @@ class MedicalKVTCStrategy:
         seen: set[str] = set()
         unique_parts: list[str] = []
         for sentence in re.split(r"(?<=[.!?])\s+", compressed):
-            normalised = sentence.strip().lower()
-            if normalised and normalised not in seen:
-                seen.add(normalised)
+            normalized = sentence.strip().lower()
+            if normalized and normalized not in seen:
+                seen.add(normalized)
                 unique_parts.append(sentence.strip())
         return " ".join(unique_parts)
 
