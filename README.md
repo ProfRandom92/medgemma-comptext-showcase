@@ -7,7 +7,7 @@
 **Privacy-First · KVTC-Compressed · Multi-Agent · Edge-Ready**
 
 [![Python 3.12+](https://img.shields.io/badge/Python-3.12%2B-3776AB?logo=python&logoColor=white)](https://python.org)
-[![Tests](https://img.shields.io/badge/Tests-52%20passed-brightgreen?logo=pytest&logoColor=white)](#-testing)
+[![Tests](https://img.shields.io/badge/Tests-65%20passed-brightgreen?logo=pytest&logoColor=white)](#-testing)
 [![Streamlit](https://img.shields.io/badge/Dashboard-Streamlit-FF4B4B?logo=streamlit&logoColor=white)](#-streamlit-dashboard)
 [![KVTC](https://img.shields.io/badge/KVTC-Sandwich%20Strategy-8A2BE2)](#-kvtc-sandwich-strategy)
 [![Token Reduction](https://img.shields.io/badge/Token%20Reduction-94%25-blueviolet)](#-why-comptext)
@@ -38,6 +38,7 @@
 - [Project Structure](#-project-structure)
 - [Testing](#-testing)
 - [Technical Details](#-technical-details)
+- [Future Vision: The AI-Native Patient Record](#-future-vision-the-ai-native-patient-record)
 - [License](#-license)
 
 ---
@@ -382,6 +383,7 @@ python demo_cli.py
 medgemma-comptext-showcase/
 │
 ├── demo_cli.py                  # Rich terminal UI demo
+├── demo_future.py               # Future EHR cross-facility showcase
 ├── dashboard.py                 # Streamlit dashboard with tiktoken metrics
 ├── requirements.txt             # Dependencies: rich, pydantic, streamlit, tiktoken …
 │
@@ -391,11 +393,13 @@ medgemma-comptext-showcase/
 │   ├── core/
 │   │   ├── models.py            # Pydantic models: Vitals, PatientState
 │   │   ├── comptext.py          # CompText compression protocol (regex extraction)
-│   │   └── codex.py             # Modular Codex system + KVTC Sandwich Strategy
-│   │                            #   → CardiologyCodex, RespiratoryCodex
-│   │                            #   → NeurologyCodex, TraumaCodex
-│   │                            #   → MedicalKVTCStrategy (sink / middle / window)
-│   │                            #   → CodexRouter (keyword-based routing)
+│   │   ├── codex.py             # Modular Codex system + KVTC Sandwich Strategy
+│   │   │                        #   → CardiologyCodex, RespiratoryCodex
+│   │   │                        #   → NeurologyCodex, TraumaCodex
+│   │   │                        #   → MedicalKVTCStrategy (sink / middle / window)
+│   │   │                        #   → CodexRouter (keyword-based routing)
+│   │   ├── cache_manager.py     # Hash-based caching for middle-section compression
+│   │   └── future_ehr.py        # AI-Native Patient Record simulation module
 │   └── agents/
 │       ├── nurse_agent.py       # NurseAgent: intake & compression
 │       ├── triage_agent.py      # TriageAgent: P1/P2/P3 priority assessment
@@ -403,6 +407,7 @@ medgemma-comptext-showcase/
 │
 └── tests/
     ├── test_comptext.py         # Unit tests: CompText, agents, Codex modules
+    ├── test_future_ehr.py       # Tests: cache manager, KVTC caching, AI-Native Record
     └── test_medical_safety.py   # Safety tests: KVTC strategy, context integrity
 ```
 
@@ -410,7 +415,7 @@ medgemma-comptext-showcase/
 
 ## 🧪 Testing
 
-The test suite covers **every component** of the system with **52 unit tests** across two test files:
+The test suite covers **every component** of the system with **65 unit tests** across three test files:
 
 | Test Class | Tests | Covers |
 |---|:---:|---|
@@ -426,6 +431,9 @@ The test suite covers **every component** of the system with **52 unit tests** a
 | `TestVitalsModel` | 2 | Pydantic model defaults and values |
 | `TestPatientStateModel` | 3 | JSON compression, meta inclusion, model dump |
 | `TestTriageAgent` | 8 | P1/P2/P3 for all protocols and vital thresholds |
+| `TestCompTextCache` | 6 | Cache miss, put/get, size tracking, clear |
+| `TestKVTCCaching` | 2 | Cache hit consistency, short text bypass |
+| `TestAINativeRecord` | 5 | Save/load records, stats, unknown patient handling |
 | `TestMedicalKVTCStrategy` | 5 | Header integrity, recent context, compression ratio, short text passthrough |
 | `TestCompressContent` | 2 | MCP server entry-point, mode parameter |
 
@@ -451,7 +459,34 @@ python -m pytest tests/test_comptext.py::TestTriageAgent -v
 | **MCP Server** | `compress_content()` entry-point exposing KVTC via `medical_safe` mode |
 | **Dashboard** | [Streamlit](https://streamlit.io/) with custom CSS, Material Design metrics, delta colours |
 | **CLI** | [Rich](https://github.com/Textualize/rich) — panels, tables, progress bars, colour output |
-| **Testing** | [pytest](https://docs.pytest.org/) — 52 tests, all passing |
+| **Testing** | [pytest](https://docs.pytest.org/) — 65 tests, all passing |
+
+---
+
+## 🚀 Future Vision: The AI-Native Patient Record
+
+MedGemma introduces the concept of **"AI-Native Records"** to solve the latency-throughput dilemma in healthcare.
+
+Instead of storing data as human-readable PDFs (which require expensive re-parsing and re-tokenization by AI agents), MedGemma proposes storing patient history in a **CompText-Optimized State**.
+
+### Performance Simulation (`demo_future.py`)
+
+We compared a simulated Legacy System (PDF/Cloud) against the MedGemma AI-Native Record:
+
+| Metric | Legacy System (PDF) | MedGemma AI-Record | Improvement |
+|--------|---------------------|--------------------|-------------|
+| **Data Structure** | Unstructured / Raw | **KVTC Structured (Sink/Window)** | AI-Readiness |
+| **Access Latency** | ~1.5s (Parsing) | **~0.01s (Instant Load)** | **150x Faster** |
+| **Context Re-Compute**| Full History | **Zero (Cached Middle)** | **O(1) Access** |
+| **Token Cost** | 100% (Raw) | **~6% (Compressed)** | **94% Savings** |
+
+> *"Data is stored once, compressed once, and read instantly by any authorized AI Agent."*
+
+Run the simulation:
+
+```bash
+python demo_future.py
+```
 
 ---
 
