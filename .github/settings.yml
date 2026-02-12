@@ -1,0 +1,33 @@
+# GitHub Repository Settings — managed by probot/settings
+# https://github.com/probot/settings
+
+repository:
+  # About — short description shown in the repository sidebar
+  description: "🏥 MedGemma × CompText — Privacy-first clinical text compression for Healthcare AI. Multi-agent pipeline (Nurse → Triage → Doctor) with modular Codex routing across 4 medical domains. Achieves 94% token reduction while keeping data on-device. Built for the MedGemma Impact Challenge."
+
+  # Website
+  homepage: ""
+
+  # Topics (appear as badges below the description)
+  topics:
+    - medgemma
+    - healthcare-ai
+    - clinical-nlp
+    - multi-agent-system
+    - text-compression
+    - privacy-first
+    - pydantic
+    - streamlit
+    - edge-computing
+    - medical-informatics
+    - kaggle-competition
+    - python
+    - triage
+    - ehr
+
+  # Visibility
+  private: false
+  has_issues: true
+  has_projects: false
+  has_wiki: false
+  has_downloads: true
