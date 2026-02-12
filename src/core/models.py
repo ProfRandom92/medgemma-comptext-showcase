@@ -92,38 +92,41 @@ class PatientState(BaseModel):
         if self.vitals.bp is not None:
             parts = self.vitals.bp.split("/")
             components: list[dict[str, Any]] = []
-            if len(parts) >= 1:
-                components.append({
-                    "code": {
-                        "coding": [{
-                            "system": "http://loinc.org",
-                            "code": "8480-6",
-                            "display": "Systolic blood pressure",
-                        }],
-                    },
-                    "valueQuantity": {
-                        "value": int(parts[0]),
-                        "unit": "mmHg",
-                        "system": "http://unitsofmeasure.org",
-                        "code": "mm[Hg]",
-                    },
-                })
-            if len(parts) >= 2:
-                components.append({
-                    "code": {
-                        "coding": [{
-                            "system": "http://loinc.org",
-                            "code": "8462-4",
-                            "display": "Diastolic blood pressure",
-                        }],
-                    },
-                    "valueQuantity": {
-                        "value": int(parts[1]),
-                        "unit": "mmHg",
-                        "system": "http://unitsofmeasure.org",
-                        "code": "mm[Hg]",
-                    },
-                })
+            try:
+                if len(parts) >= 1:
+                    components.append({
+                        "code": {
+                            "coding": [{
+                                "system": "http://loinc.org",
+                                "code": "8480-6",
+                                "display": "Systolic blood pressure",
+                            }],
+                        },
+                        "valueQuantity": {
+                            "value": int(parts[0]),
+                            "unit": "mmHg",
+                            "system": "http://unitsofmeasure.org",
+                            "code": "mm[Hg]",
+                        },
+                    })
+                if len(parts) >= 2:
+                    components.append({
+                        "code": {
+                            "coding": [{
+                                "system": "http://loinc.org",
+                                "code": "8462-4",
+                                "display": "Diastolic blood pressure",
+                            }],
+                        },
+                        "valueQuantity": {
+                            "value": int(parts[1]),
+                            "unit": "mmHg",
+                            "system": "http://unitsofmeasure.org",
+                            "code": "mm[Hg]",
+                        },
+                    })
+            except (ValueError, IndexError):
+                components = []
             entries.append({
                 "resource": {
                     "resourceType": "Observation",

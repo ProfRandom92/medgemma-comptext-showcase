@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 def analyze_xray(image_path: str, symptoms: str) -> str:
-    """Analyse a medical image alongside symptom text.
+    """Analyze a medical image alongside symptom text.
 
     Args:
         image_path: Path to an X-ray (or other medical image) file.

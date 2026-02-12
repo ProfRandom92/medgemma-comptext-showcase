@@ -7,6 +7,13 @@ from typing import Any
 
 logger = logging.getLogger(__name__)
 
+try:
+    import torch
+
+    _TORCH_AVAILABLE = True
+except ImportError:
+    _TORCH_AVAILABLE = False
+
 # ---------------------------------------------------------------------------
 # GPU-accelerated Doctor (PaliGemma) — loaded lazily when CUDA is available
 # ---------------------------------------------------------------------------
@@ -20,12 +27,7 @@ def get_transformers_doctor() -> TransformersDoctor | None:
     if _transformers_doctor_instance is not None:
         return _transformers_doctor_instance
 
-    try:
-        import torch  # noqa: F811
-    except ImportError:
-        return None
-
-    if not torch.cuda.is_available():
+    if not _TORCH_AVAILABLE or not torch.cuda.is_available():
         return None
 
     _transformers_doctor_instance = TransformersDoctor()
@@ -42,7 +44,6 @@ class TransformersDoctor:
     MODEL_ID = "google/paligemma-3b-pt-224"
 
     def __init__(self) -> None:
-        import torch
         from transformers import AutoProcessor, PaliGemmaForConditionalGeneration
 
         quantization_config = None
@@ -79,7 +80,6 @@ class TransformersDoctor:
         Returns:
             Generated text from the model.
         """
-        import torch
         from PIL import Image
 
         image = None

@@ -47,6 +47,7 @@ def check_gpu() -> bool:
 
 def download_sample_xray() -> None:
     """Download a sample chest X-ray image for testing."""
+    import urllib.error
     import urllib.request
 
     url = (
@@ -58,8 +59,11 @@ def download_sample_xray() -> None:
     try:
         urllib.request.urlretrieve(url, dest)
         print(f"[✓] Sample X-ray saved to {dest}")
-    except Exception as exc:  # noqa: BLE001
-        print(f"[⚠] Could not download sample X-ray: {exc}")
+    except urllib.error.URLError as exc:
+        print(f"[⚠] Network error downloading sample X-ray: {exc}")
+        print("    You can manually place an image at ./sample_xray.jpg")
+    except OSError as exc:
+        print(f"[⚠] File system error saving sample X-ray: {exc}")
         print("    You can manually place an image at ./sample_xray.jpg")
 
 
