@@ -111,6 +111,44 @@ class TestDoctorAgent:
         assert isinstance(result, str)
         assert len(result) > 0
 
+    def test_generate_plan_trauma(self):
+        doctor = DoctorAgent()
+        plan = doctor.generate_plan("🚑 Trauma Protocol", {})
+
+        assert isinstance(plan, dict)
+        assert "immediate_actions" in plan
+        assert "imaging" in plan
+        assert "consults" in plan
+        assert any("Airway" in a for a in plan["immediate_actions"])
+        assert any("Pan-Scan" in i for i in plan["imaging"])
+        assert any("Trauma Surgery" in c for c in plan["consults"])
+
+    def test_generate_plan_neurology(self):
+        doctor = DoctorAgent()
+        plan = doctor.generate_plan("🧠 Neurology Protocol", {})
+
+        assert any("Code Stroke" in a for a in plan["immediate_actions"])
+        assert any("CT Head" in i for i in plan["imaging"])
+        assert any("Neurology" in c for c in plan["consults"])
+
+    def test_generate_plan_cardiology(self):
+        doctor = DoctorAgent()
+        plan = doctor.generate_plan("🫀 Cardiology Protocol", {})
+
+        assert any("ECG" in a for a in plan["immediate_actions"])
+        assert any("ACLS" in a for a in plan["immediate_actions"])
+        assert any("Cardiology" in c for c in plan["consults"])
+
+    def test_generate_plan_general_fallback(self):
+        doctor = DoctorAgent()
+        plan = doctor.generate_plan("General", {})
+
+        assert isinstance(plan, dict)
+        assert "immediate_actions" in plan
+        assert "imaging" in plan
+        assert "consults" in plan
+        assert any("ABCDE" in a for a in plan["immediate_actions"])
+
 
 # ---------------------------------------------------------------------------
 # Codex System
