@@ -192,6 +192,70 @@ class TraumaCodex(ClinicalModule):
         return match.group(1).strip() if match else None
 
 
+class MedicalKVTCStrategy:
+    """KVTC Sandwich Strategy for medical context compression.
+
+    Implements a 'Lossless-Header / Compressed-History / Lossless-Recent'
+    architecture inspired by the KV Cache Transform Coding approach
+    (arXiv:2511.01815), adapted for safety-critical medical text.
+
+    - sink_size:   Preserve the first N chars verbatim (system prompts,
+                   disclaimers).
+    - window_size: Preserve the last M chars verbatim (recent query /
+                   symptom description).
+    - middle:      Aggressively compress the remaining history.
+    """
+
+    def __init__(
+        self, sink_size: int = 800, window_size: int = 1500
+    ) -> None:
+        self.sink_size = sink_size
+        self.window_size = window_size
+
+    # ------------------------------------------------------------------
+    # public API
+    # ------------------------------------------------------------------
+
+    def compress(self, text: str) -> str:
+        """Apply the sandwich strategy to *text* and return the result.
+
+        If the text is short enough that sink + window cover everything,
+        the original text is returned unchanged.
+        """
+        total = len(text)
+        min_length = self.sink_size + self.window_size
+
+        if total <= min_length:
+            return text
+
+        header = text[: self.sink_size]
+        recent = text[-self.window_size :]
+        middle_raw = text[self.sink_size : total - self.window_size]
+        middle_compressed = self._compress_middle(middle_raw)
+
+        return header + middle_compressed + recent
+
+    # ------------------------------------------------------------------
+    # internals
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def _compress_middle(text: str) -> str:
+        """Compress the middle segment by collapsing whitespace and
+        removing redundant lines while preserving medical keywords."""
+        # Collapse runs of whitespace into a single space
+        compressed = re.sub(r"\s+", " ", text).strip()
+        # Remove duplicate sentences (simple dedup)
+        seen: set[str] = set()
+        unique_parts: list[str] = []
+        for sentence in re.split(r"(?<=[.!?])\s+", compressed):
+            normalized = sentence.strip().lower()
+            if normalized and normalized not in seen:
+                seen.add(normalized)
+                unique_parts.append(sentence.strip())
+        return " ".join(unique_parts)
+
+
 class CodexRouter:
     """Selects the appropriate clinical module based on input text."""
 
