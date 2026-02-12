@@ -5,6 +5,8 @@ from __future__ import annotations
 import re
 from abc import ABC, abstractmethod
 
+from src.core.cache_manager import CompTextCache
+
 
 class ClinicalModule(ABC):
     """Abstract base class for domain-specific clinical modules."""
@@ -211,6 +213,7 @@ class MedicalKVTCStrategy:
     ) -> None:
         self.sink_size = sink_size
         self.window_size = window_size
+        self._cache = CompTextCache()
 
     # ------------------------------------------------------------------
     # public API
@@ -231,7 +234,13 @@ class MedicalKVTCStrategy:
         header = text[: self.sink_size]
         recent = text[-self.window_size :]
         middle_raw = text[self.sink_size : total - self.window_size]
-        middle_compressed = self._compress_middle(middle_raw)
+
+        cached = self._cache.get(middle_raw)
+        if cached is not None:
+            middle_compressed = cached
+        else:
+            middle_compressed = self._compress_middle(middle_raw)
+            self._cache.put(middle_raw, middle_compressed)
 
         return header + middle_compressed + recent
 
