@@ -321,6 +321,11 @@ class TestTraumaCodex:
         result = self.codex.extract("Patient involved in a crash.")
         assert result["visible_injury"] is None
 
+    def test_extracts_mechanism_fell_from(self):
+        result = self.codex.extract("Patient fell from a roof, laceration on head.")
+        assert result["mechanism_of_injury"] is not None
+        assert "roof" in result["mechanism_of_injury"]
+
 
 # ---------------------------------------------------------------------------
 # Triage Agent

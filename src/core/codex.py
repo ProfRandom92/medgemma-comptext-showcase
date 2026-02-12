@@ -157,7 +157,7 @@ class TraumaCodex(ClinicalModule):
     """Trauma-specific clinical module."""
 
     _MECHANISM_PATTERN = re.compile(
-        r"(?:fall\s+from|hit\s+by|struck\s+by|crash\s+into|involved\s+in)\s+(.+?)(?:\.|,|;|$)",
+        r"(?:(?:fall|fell)\s+from|hit\s+by|struck\s+by|crash\s+into|involved\s+in)\s+(.+?)(?:\.|,|;|$)",
         re.IGNORECASE,
     )
     _VISIBLE_INJURY_PATTERN = re.compile(
