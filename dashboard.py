@@ -180,7 +180,12 @@ if st.button("Compress & Analyse", type="primary") and raw_text.strip():
     m1, m2, m3 = st.columns(3)
     m1.metric("Original Tokens", raw_tokens)
     m2.metric("CompText Tokens", compressed_tokens)
-    m3.metric("Token Reduction", f"~{reduction_pct:.0f}%", delta=f"-{reduction_pct:.0f}%")
+    m3.metric(
+        "Token Reduction",
+        f"~{reduction_pct:.0f}%",
+        delta=f"{reduction_pct:.0f}% saved",
+        delta_color="normal",
+    )
 
     chart_data = pd.DataFrame(
         {"Tokens": [raw_tokens, compressed_tokens]},
