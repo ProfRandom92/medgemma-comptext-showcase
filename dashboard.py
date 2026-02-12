@@ -110,7 +110,7 @@ if st.button("Compress & Analyse", type="primary") and raw_text.strip():
 
     with v1:
         if vitals.hr is not None:
-            hr_delta = vitals.hr - 80  # normal resting HR baseline
+            hr_delta = vitals.hr - 80  # reference resting HR
             st.metric("Heart Rate (bpm)", vitals.hr, delta=f"{hr_delta:+d}", delta_color="inverse")
         else:
             st.metric("Heart Rate (bpm)", "N/A")
@@ -119,7 +119,7 @@ if st.button("Compress & Analyse", type="primary") and raw_text.strip():
         if vitals.bp is not None:
             try:
                 systolic = int(vitals.bp.split("/")[0])
-                bp_delta = systolic - 120  # normal systolic baseline
+                bp_delta = systolic - 120  # reference systolic
                 st.metric("Blood Pressure", vitals.bp, delta=f"{bp_delta:+d} sys", delta_color="inverse")
             except (ValueError, IndexError):
                 st.metric("Blood Pressure", vitals.bp)
@@ -128,7 +128,7 @@ if st.button("Compress & Analyse", type="primary") and raw_text.strip():
 
     with v3:
         if vitals.temp is not None:
-            temp_delta = round(vitals.temp - 37.0, 1)  # normal temp baseline
+            temp_delta = round(vitals.temp - 37.0, 1)  # reference temp
             st.metric("Temperature (°C)", vitals.temp, delta=f"{temp_delta:+.1f}", delta_color="inverse")
         else:
             st.metric("Temperature (°C)", "N/A")
