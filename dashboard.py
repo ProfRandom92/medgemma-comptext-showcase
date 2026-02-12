@@ -4,6 +4,7 @@ Run with:
     streamlit run dashboard.py
 """
 
+import pandas as pd
 import streamlit as st
 import tiktoken
 
@@ -148,13 +149,41 @@ if st.button("Compress & Analyse", type="primary") and raw_text.strip():
         recommendation = doctor.diagnose(state_dict)
         st.code(recommendation, language="text")
 
-    # --- Token comparison (tiktoken cl100k_base) ---
+    # --- MedGemma-7b Clinical Recommendations ---
+    st.divider()
+    st.subheader("👨‍⚕️ MedGemma-7b Clinical Recommendations")
+    plan = doctor.generate_plan(protocol, state_dict)
+
+    p1, p2, p3 = st.columns(3)
+    with p1:
+        st.info("**⚡ Immediate Actions**")
+        for action in plan["immediate_actions"]:
+            st.write(f"• {action}")
+    with p2:
+        st.info("**🩻 Imaging**")
+        for img in plan["imaging"]:
+            st.write(f"• {img}")
+    with p3:
+        st.success("**🩺 Consults**")
+        for consult in plan["consults"]:
+            st.write(f"• {consult}")
+
+    # --- 📊 Infrastructure Efficiency ---
     raw_tokens = max(1, len(_enc.encode(raw_text)))
     compressed_json = patient_state.to_compressed_json()
     compressed_tokens = max(1, len(_enc.encode(compressed_json)))
+    reduction_pct = 100 - (compressed_tokens / raw_tokens * 100)
 
     st.divider()
+    st.subheader("📊 Infrastructure Efficiency")
+
     m1, m2, m3 = st.columns(3)
-    m1.metric("Raw Tokens (tiktoken)", raw_tokens)
-    m2.metric("Compressed Tokens (tiktoken)", compressed_tokens)
-    m3.metric("Reduction", f"{100 - (compressed_tokens / raw_tokens * 100):.0f}%")
+    m1.metric("Original Tokens", raw_tokens)
+    m2.metric("CompText Tokens", compressed_tokens)
+    m3.metric("Token Reduction", f"~{reduction_pct:.0f}%", delta=f"-{reduction_pct:.0f}%")
+
+    chart_data = pd.DataFrame(
+        {"Tokens": [raw_tokens, compressed_tokens]},
+        index=["Original (raw text)", "CompText (compressed)"],
+    )
+    st.bar_chart(chart_data)
