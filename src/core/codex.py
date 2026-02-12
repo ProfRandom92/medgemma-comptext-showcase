@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import re
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
 
 
 class ClinicalModule(ABC):
@@ -218,3 +219,90 @@ class CodexRouter:
                 if keyword in lower_text:
                     return module
         return None
+
+
+@dataclass
+class KVTCResult:
+    """Result of KVTC (Sink-Middle-Window) compression.
+
+    Attributes:
+        text: The final compressed text output.
+        head: The preserved head (sink) portion.
+        tail: The preserved tail (window) portion.
+        compressed_middle: The compressed middle portion, or None if input was
+            too short to compress.
+        was_compressed: Whether compression was actually applied.
+    """
+
+    text: str
+    head: str
+    tail: str
+    compressed_middle: str | None
+    was_compressed: bool
+
+
+class KVTCStrategy:
+    """KVTC (KV Cache Transform Coding) compression strategy.
+
+    Implements the Sink-Middle-Window approach from the NVIDIA 'KV Cache
+    Transform Coding' paper (arXiv:2511.01815):
+
+    * **Sink** – The start of the text is critical for role retention (system
+      prompt) and is preserved verbatim.
+    * **Window** – The most recent tokens are critical for immediate reasoning
+      and are preserved verbatim.
+    * **Middle** – The section between sink and window holds the most
+      redundancy and is the target for aggressive CompText compression.
+    """
+
+    def compress(
+        self,
+        text: str,
+        sink_chars: int = 500,
+        window_chars: int = 1000,
+    ) -> KVTCResult:
+        """Compress *text* using the Sink-Middle-Window strategy.
+
+        Args:
+            text: The full input text to compress.
+            sink_chars: Number of characters to preserve at the start (sink).
+            window_chars: Number of characters to preserve at the end (window).
+
+        Returns:
+            A ``KVTCResult`` containing the compressed text and metadata.
+        """
+        if len(text) < (sink_chars + window_chars):
+            return KVTCResult(
+                text=text,
+                head=text,
+                tail=text,
+                compressed_middle=None,
+                was_compressed=False,
+            )
+
+        head = text[:sink_chars]
+        tail = text[-window_chars:]
+        middle = text[sink_chars:-window_chars]
+
+        # Lazy import to avoid circular dependency
+        from src.core.comptext import CompTextProtocol
+
+        protocol = CompTextProtocol()
+        compressed_state = protocol.compress(middle)
+        compressed_middle = compressed_state.to_compressed_json()
+
+        compressed_text = (
+            f"{head}\n"
+            f"[...Context Compressed...]\n"
+            f"{compressed_middle}\n"
+            f"[...Recent Context...]\n"
+            f"{tail}"
+        )
+
+        return KVTCResult(
+            text=compressed_text,
+            head=head,
+            tail=tail,
+            compressed_middle=compressed_middle,
+            was_compressed=True,
+        )
