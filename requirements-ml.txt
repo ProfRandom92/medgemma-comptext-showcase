@@ -1,0 +1,7 @@
+# Optional ML dependencies for GPU-accelerated inference (Google Colab).
+# Install with: pip install -r requirements-ml.txt
+torch
+transformers
+accelerate
+bitsandbytes
+pillow

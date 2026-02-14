@@ -51,17 +51,18 @@ with st.sidebar:
     st.header("⚙️ System Status")
     st.success("CompText Engine: **Online**")
     st.success("Codex Router: **Online**")
+    st.success("KVTC Strategy: **Online**")
     st.success("Triage Agent: **Online**")
     st.divider()
     st.metric("Token Reduction", "94%", delta="vs raw clinical text")
     st.divider()
-    st.caption("MedGemma x CompText v2 — Hackathon Edition")
+    st.caption("MedGemma x CompText v2 — KVTC Sandwich Strategy")
 
 # ---------------------------------------------------------------------------
 # Main Header
 # ---------------------------------------------------------------------------
 st.title("🏥 MedGemma x CompText Dashboard")
-st.caption("Privacy-First Multi-Agent Healthcare System • Google Material Design")
+st.caption("Privacy-First Multi-Agent Healthcare System • KVTC Sandwich Strategy • Google Material Design")
 
 raw_text = st.text_area(
     "Enter patient symptoms",
