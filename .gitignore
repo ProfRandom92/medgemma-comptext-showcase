@@ -1,3 +1,4 @@
+# Python
 __pycache__/
 *.pyc
 *.pyo
@@ -12,17 +13,60 @@ htmlcov/
 test_output*.txt
 verification_output.txt
 dns_check*.txt
-nul
+
+# Node/Next.js - Build Artifacts (IMPORTANT: Keep these local)
+showcase/node_modules/
+showcase/.next/
+showcase/.env.local
+showcase/.env.local.example
+showcase/out/
+showcase/dist/
+showcase/build/
+showcase/package-lock.json
+showcase/tsconfig.tsbuildinfo
+
+# IDE
 .vscode/
+.idea/
+*.swp
+*.swo
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
+nul
+
+# Build & Cache
+.cache/
+*.cache
+
+# Test Coverage
+coverage/
+.nyc_output/
+
+# Documentation (keep important ones)
 .claude/
 .docs/
 .project-structure/
 .infrastructure/
 .monitoring/
 .benchmarks/
+
+# CI/CD
 .github/workflows/
 *.bat
 *.sh
+!deploy.sh
+
+# Project-specific
 requirements-ml.txt
 medgemma_dashboard.png
 mcp_config.json
+showcase/videos/
+showcase/e2e/
+tests/e2e/
