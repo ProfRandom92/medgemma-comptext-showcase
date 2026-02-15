@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedGemma × CompText Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #0277bd 0%, #01579b 100%);
+            color: white;
+            padding: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header h1 { font-size: 32px; margin-bottom: 8px; }
+        .header p { font-size: 14px; opacity: 0.9; }
+        .status-badges { display: flex; gap: 10px; }
+        .badge {
+            background: rgba(255,255,255,0.2);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .badge.online {
+            background: rgba(76,175,80,0.3);
+            color: #c8e6c9;
+        }
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 20px;
+            padding: 30px;
+        }
+        .sidebar {
+            background: #f9f9f9;
+            border-radius: 12px;
+            padding: 20px;
+            height: fit-content;
+            border: 1px solid #e0e0e0;
+        }
+        .sidebar-title {
+            font-weight: 700;
+            font-size: 14px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            color: #333;
+            letter-spacing: 0.5px;
+        }
+        .sidebar-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e8e8e8;
+            font-size: 13px;
+            color: #666;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #4caf50;
+            margin-right: 6px;
+        }
+        .input-section {
+            background: #f5f5f5;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+        .input-label {
+            font-weight: 700;
+            font-size: 14px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d0d0d0;
+            border-radius: 8px;
+            font-family: "Monaco", "Menlo", monospace;
+            font-size: 13px;
+            resize: vertical;
+            background: white;
+            color: #333;
+            min-height: 120px;
+        }
+        .button-group {
+            margin-top: 12px;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #1976d2 0%, #0d47a1 100%);
+            color: white;
+        }
+        .alert-critical {
+            background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 18px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(211,47,47,0.4);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 4px 12px rgba(211,47,47,0.4); }
+            50% { box-shadow: 0 4px 20px rgba(211,47,47,0.7); }
+        }
+        .protocol-banner {
+            background: linear-gradient(135deg, #f57c00 0%, #e65100 100%);
+            color: white;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .metric-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f9f9f9 100%);
+            border-radius: 12px;
+            padding: 20px;
+            border-left: 4px solid #00897b;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+        .metric-card.alert {
+            border-left-color: #d32f2f;
+            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+        }
+        .metric-card.warning {
+            border-left-color: #f57c00;
+            background: linear-gradient(135deg, #fff8e1 0%, #fff9c4 100%);
+        }
+        .metric-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #999;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        .metric-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #333;
+        }
+        .metric-card.alert .metric-value { color: #c62828; }
+        .metric-card.warning .metric-value { color: #e65100; }
+        .section { margin-bottom: 20px; }
+        .section-title {
+            font-weight: 700;
+            font-size: 16px;
+            margin-bottom: 12px;
+            color: #333;
+        }
+        .comparison-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .comparison-panel {
+            background: #f9f9f9;
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid #e0e0e0;
+        }
+        .comparison-header {
+            font-weight: 700;
+            font-size: 13px;
+            margin-bottom: 10px;
+            color: #333;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .comparison-content {
+            background: white;
+            border-radius: 8px;
+            padding: 12px;
+            font-family: "Monaco", "Menlo", monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            max-height: 250px;
+            overflow-y: auto;
+            border: 1px solid #e0e0e0;
+            color: #333;
+        }
+        .compression-stats {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #1976d2;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        .stat-item { text-align: center; }
+        .stat-label {
+            font-size: 11px;
+            color: #0d47a1;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .stat-value {
+            font-size: 24px;
+            color: #1976d2;
+            font-weight: 700;
+        }
+        .code-block {
+            background: #282c34;
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            font-family: "Monaco", "Menlo", monospace;
+            font-size: 12px;
+            color: #abb2bf;
+            line-height: 1.6;
+        }
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        .success-message {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 12px;
+            border-radius: 8px;
+            color: #2e7d32;
+            font-size: 13px;
+            margin-top: 12px;
+        }
+        @media (max-width: 1200px) {
+            .main-content { grid-template-columns: 1fr; }
+            .metrics-grid { grid-template-columns: 1fr; }
+            .comparison-container { grid-template-columns: 1fr; }
+            .compression-stats { grid-template-columns: 1fr; }
+            .analysis-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>🏥 MedGemma × CompText</h1>
+                <p>Privacy-First Multi-Agent Healthcare System • KVTC Sandwich Strategy</p>
+            </div>
+            <div class="status-badges">
+                <div class="badge online"><span class="status-indicator"></span>CompText</div>
+                <div class="badge online"><span class="status-indicator"></span>Codex Router</div>
+                <div class="badge online"><span class="status-indicator"></span>KVTC</div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div>
+                <div class="input-section">
+                    <label class="input-label">Enter Patient Clinical Notes</label>
+                    <textarea>Chief complaint: chest pain radiating to left arm.
+HR 110 bpm, BP 130/85 mmHg, RR 18, Temp 39.2°C, O2 sat 98% RA.
+Associated symptoms: mild dyspnea, diaphoresis.
+PMH: hypertension, hyperlipidemia.
+Current medications: aspirin, lisinopril, atorvastatin.
+Allergies: NKDA</textarea>
+                    <div class="button-group">
+                        <button class="btn btn-primary">Compress & Analyze</button>
+                    </div>
+                </div>
+
+                <div class="alert-critical">🚨 RED ALERT — P1 CRITICAL 🚨</div>
+
+                <div class="protocol-banner">⚠️ ACTIVE PROTOCOL: 🫀 Cardiology Protocol</div>
+
+                <div class="section">
+                    <div class="section-title">📊 Vital Signs</div>
+                    <div class="metrics-grid">
+                        <div class="metric-card alert">
+                            <div class="metric-label">Heart Rate (bpm)</div>
+                            <div class="metric-value">110</div>
+                        </div>
+                        <div class="metric-card alert">
+                            <div class="metric-label">Blood Pressure</div>
+                            <div class="metric-value">130/85</div>
+                        </div>
+                        <div class="metric-card warning">
+                            <div class="metric-label">Temperature (°C)</div>
+                            <div class="metric-value">39.2</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">📝 Text Compression Comparison</div>
+                    <div class="comparison-container">
+                        <div class="comparison-panel">
+                            <div class="comparison-header">📄 Original Clinical Text</div>
+                            <div class="comparison-content">Chief complaint: chest pain radiating to left arm. HR 110 bpm, BP 130/85 mmHg, RR 18, Temp 39.2°C, O2 sat 98% RA. Associated symptoms: mild dyspnea, diaphoresis. PMH: hypertension, hyperlipidemia. Current medications: aspirin, lisinopril, atorvastatin. Allergies: NKDA
+
+(450 tokens)</div>
+                        </div>
+                        <div class="comparison-panel">
+                            <div class="comparison-header">📦 Compressed Patient State</div>
+                            <div class="comparison-content">{
+  "chief_complaint": "chest pain...",
+  "vitals": {
+    "hr": 110,
+    "bp": "130/85",
+    "temp": 39.2
+  },
+  "specialist_data": {
+    "radiation": "left arm"
+  }
+}
+
+(35 tokens)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">🔍 Analysis Results</div>
+                    <div class="analysis-grid">
+                        <div>
+                            <div style="font-weight: 700; font-size: 14px; margin-bottom: 10px;">Compressed JSON</div>
+                            <div class="code-block">
+{<br>
+&nbsp;"chief_complaint": "chest pain",<br>
+&nbsp;"vitals": {<br>
+&nbsp;&nbsp;"hr": 110,<br>
+&nbsp;&nbsp;"bp": "130/85",<br>
+&nbsp;&nbsp;"temp": 39.2<br>
+&nbsp;},<br>
+&nbsp;"specialist_data": {<br>
+&nbsp;&nbsp;"radiation": "left arm"<br>
+&nbsp;},<br>
+&nbsp;"triage_level": "P1 - CRITICAL"<br>
+}
+                            </div>
+                        </div>
+                        <div>
+                            <div style="font-weight: 700; font-size: 14px; margin-bottom: 10px;">Doctor Agent Recommendation</div>
+                            <div class="code-block">
+[MedGemma Assessment]<br>
+Chief Complaint: chest pain radiating<br>
+to left arm<br>
+Noted: elevated HR (110 bpm), fever<br>
+(39.2°C), classic cardiac presentation<br>
+<br>
+Recommendation: URGENT cardiology<br>
+evaluation. Consider troponin, ECG,<br>
+chest imaging. Monitor closely.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">📊 Compression Metrics</div>
+                    <div class="compression-stats">
+                        <div class="stat-item">
+                            <div class="stat-label">Raw Tokens</div>
+                            <div class="stat-value">450</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Compressed Tokens</div>
+                            <div class="stat-value">35</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Reduction %</div>
+                            <div class="stat-value">92%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="success-message">✅ Analysis complete — All systems nominal</div>
+            </div>
+
+            <div class="sidebar">
+                <div class="sidebar-title">⚙️ System Status</div>
+                <div class="sidebar-item" style="color: #4caf50; font-weight: 600;">
+                    <span>✓ CompText Engine</span>
+                    <span>Online</span>
+                </div>
+                <div class="sidebar-item" style="color: #4caf50; font-weight: 600;">
+                    <span>✓ Codex Router</span>
+                    <span>Online</span>
+                </div>
+                <div class="sidebar-item" style="color: #4caf50; font-weight: 600;">
+                    <span>✓ KVTC Strategy</span>
+                    <span>Online</span>
+                </div>
+                <div class="sidebar-item" style="color: #4caf50; font-weight: 600;">
+                    <span>✓ Triage Agent</span>
+                    <span>Online</span>
+                </div>
+                <div style="border-top: 1px solid #e0e0e0; margin-top: 12px; padding-top: 12px;">
+                    <div style="display: flex; justify-content: space-between; padding: 8px 0; font-size: 13px;">
+                        <span style="color: #666;">Token Reduction</span>
+                        <span style="font-weight: 700; color: #1976d2;">94%</span>
+                    </div>
+                </div>
+                <div style="border-top: 1px solid #e0e0e0; margin-top: 12px; padding-top: 12px;">
+                    <p style="font-size: 11px; color: #999;">
+                        MedGemma × CompText v3 — KVTC Sandwich Strategy
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

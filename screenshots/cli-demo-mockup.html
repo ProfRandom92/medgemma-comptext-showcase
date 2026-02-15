@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedGemma × CompText CLI Demo</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
+            background: #0f1419;
+            color: #e0e0e0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #1a1f26;
+            border-radius: 12px;
+            border: 1px solid #2a3136;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            overflow: hidden;
+        }
+        .terminal-header {
+            background: linear-gradient(135deg, #2a3136 0%, #1a1f26 100%);
+            padding: 12px 16px;
+            border-bottom: 1px solid #2a3136;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .terminal-button {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #555;
+        }
+        .terminal-button.red { background: #ff5f57; }
+        .terminal-button.yellow { background: #ffbd2e; }
+        .terminal-button.green { background: #28c940; }
+        .terminal-title {
+            flex: 1;
+            text-align: center;
+            font-size: 12px;
+            color: #888;
+        }
+        .terminal-content {
+            padding: 20px;
+            font-size: 13px;
+            line-height: 1.8;
+            overflow-x: auto;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        .prompt { color: #4fb3d9; font-weight: bold; }
+        .output { color: #e0e0e0; }
+        .highlight { color: #9ec400; font-weight: bold; }
+        .error { color: #ff5f57; }
+        .success { color: #28c940; }
+        .info { color: #6c7986; }
+        .logo {
+            color: #4fb3d9;
+            font-weight: bold;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        .separator {
+            border-top: 1px solid #2a3136;
+            margin: 12px 0;
+        }
+        .table-header {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1.5fr;
+            gap: 20px;
+            padding: 8px 0;
+            border-bottom: 2px solid #4fb3d9;
+            margin-bottom: 8px;
+            color: #4fb3d9;
+            font-weight: bold;
+        }
+        .table-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1.5fr;
+            gap: 20px;
+            padding: 8px 0;
+            border-bottom: 1px solid #2a3136;
+            color: #e0e0e0;
+        }
+        .table-cell-first {
+            color: #e0e0e0;
+            padding-left: 0;
+        }
+        .panel {
+            border: 1px solid #2a3136;
+            border-radius: 6px;
+            margin: 12px 0;
+            overflow: hidden;
+        }
+        .panel-header {
+            background: #2a3136;
+            padding: 8px 12px;
+            color: #4fb3d9;
+            font-weight: bold;
+            font-size: 12px;
+        }
+        .panel-content {
+            padding: 12px;
+            background: #0f1419;
+            color: #e0e0e0;
+        }
+        .json-key { color: #6c7986; }
+        .json-value { color: #9ec400; }
+        .json-string { color: #ec9bad; }
+        .json-number { color: #6897bb; }
+        .progress-bar {
+            background: #2a3136;
+            height: 4px;
+            border-radius: 2px;
+            margin: 8px 0;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: linear-gradient(90deg, #4fb3d9, #6897bb);
+            height: 100%;
+            width: 100%;
+            animation: progress 1s ease-in-out;
+        }
+        @keyframes progress {
+            0% { width: 0; }
+            100% { width: 100%; }
+        }
+        .input-line {
+            margin: 8px 0;
+            padding: 4px;
+        }
+        .cursor {
+            animation: blink 1s infinite;
+            color: #4fb3d9;
+        }
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+        .box {
+            border: 1px solid #2a3136;
+            border-radius: 6px;
+            padding: 12px;
+            margin: 8px 0;
+            background: #0a0e13;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="terminal-header">
+            <div class="terminal-button red"></div>
+            <div class="terminal-button yellow"></div>
+            <div class="terminal-button green"></div>
+            <div class="terminal-title">MedGemma × CompText CLI Demo</div>
+        </div>
+
+        <div class="terminal-content">
+            <div class="logo">
+🏥 MedGemma × CompText
+Privacy-First Multi-Agent Healthcare System
+            </div>
+
+            <div class="input-line">
+                <span class="prompt">➜</span>
+                <span class="output"> python demo_cli.py</span>
+            </div>
+
+            <div style="margin-top: 16px; color: #6c7986;">
+╔════════════════════════════════════════════════════════════════╗<br>
+║           MedGemma × CompText v3 CLI Demo                     ║<br>
+║      Privacy-First Multi-Agent Healthcare System              ║<br>
+╚════════════════════════════════════════════════════════════════╝
+            </div>
+
+            <div class="input-line" style="margin-top: 16px;">
+                <span class="prompt">Enter patient symptoms:</span>
+                <span class="output"> Chief complaint: chest pain radiating to left arm. HR 110, BP 130/85, Temp 39.2C. Medications: aspirin, metoprolol.</span>
+            </div>
+
+            <div class="input-line">
+                <span class="info">Compressing with CompText...</span>
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+
+            <div style="margin: 16px 0; color: #28c940;">✓ Compression complete</div>
+
+            <div class="separator"></div>
+
+            <div style="margin: 12px 0;">
+                <div style="color: #4fb3d9; font-weight: bold; margin-bottom: 8px;">╭─ Token Usage Comparison ─╮</div>
+                <table class="table-header" style="border-bottom: 2px solid #4fb3d9;">
+                    <div style="color: #4fb3d9; font-weight: bold;">Format</div>
+                    <div style="color: #4fb3d9; font-weight: bold;">Tokens</div>
+                    <div style="color: #4fb3d9; font-weight: bold;">Status</div>
+                </table>
+
+                <div class="table-row">
+                    <div class="table-cell-first">Raw Text</div>
+                    <div>450</div>
+                    <div><span class="error">❌ Bloated</span></div>
+                </div>
+
+                <div class="table-row" style="border-bottom: 2px solid #4fb3d9;">
+                    <div class="table-cell-first">CompText JSON</div>
+                    <div>35</div>
+                    <div><span class="success">✅ Optimized</span></div>
+                </div>
+
+                <div style="color: #4fb3d9; font-weight: bold; margin-top: 8px;">╰────────────────────────╯</div>
+            </div>
+
+            <div class="separator"></div>
+
+            <div class="panel">
+                <div class="panel-header">📦 Compressed Patient State</div>
+                <div class="panel-content">
+                    <div class="input-line">
+                        <span class="json-key">{</span>
+                    </div>
+                    <div class="input-line" style="margin-left: 16px;">
+                        <span class="json-key">"chief_complaint":</span>
+                        <span class="json-string">"chest pain radiating to left arm"</span><span class="json-key">,</span>
+                    </div>
+                    <div class="input-line" style="margin-left: 16px;">
+                        <span class="json-key">"onset":</span>
+                        <span class="json-string">"acute, at rest"</span><span class="json-key">,</span>
+                    </div>
+                    <div class="input-line" style="margin-left: 16px;">
+                        <span class="json-key">"vitals":</span>
+                        <span class="json-key">{</span>
+                    </div>
+                    <div class="input-line" style="margin-left: 32px;">
+                        <span class="json-key">"hr":</span>
+                        <span class="json-number">110</span><span class="json-key">,</span>
+                    </div>
+                    <div class="input-line" style="margin-left: 32px;">
+                        <span class="json-key">"bp":</span>
+                        <span class="json-string">"130/85"</span><span class="json-key">,</span>
+                    </div>
+                    <div class="input-line" style="margin-left: 32px;">
+                        <span class="json-key">"temp":</span>
+                        <span class="json-number">39.2</span><span class="json-key">,</span>
+                    </div>
+                    <div class="input-line" style="margin-left: 32px;">
+                        <span class="json-key">"rr":</span>
+                        <span class="json-number">18</span>
+                    </div>
+                    <div class="input-line" style="margin-left: 16px;">
+                        <span class="json-key">},</span>
+                    </div>
+                    <div class="input-line" style="margin-left: 16px;">
+                        <span class="json-key">"specialist_data":</span>
+                        <span class="json-key">{</span>
+                    </div>
+                    <div class="input-line" style="margin-left: 32px;">
+                        <span class="json-key">"radiation":</span>
+                        <span class="json-string">"left arm"</span><span class="json-key">,</span>
+                    </div>
+                    <div class="input-line" style="margin-left: 32px;">
+                        <span class="json-key">"pain_quality":</span>
+                        <span class="json-string">"crushing"</span>
+                    </div>
+                    <div class="input-line" style="margin-left: 16px;">
+                        <span class="json-key">},</span>
+                    </div>
+                    <div class="input-line" style="margin-left: 16px;">
+                        <span class="json-key">"triage_level":</span>
+                        <span class="json-string">"🔴 P1 — CRITICAL"</span>
+                    </div>
+                    <div class="input-line">
+                        <span class="json-key">}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="separator"></div>
+
+            <div class="panel">
+                <div class="panel-header">👨‍⚕️ Doctor Agent Response</div>
+                <div class="panel-content">
+                    <div class="input-line">
+                        <span class="highlight">[MedGemma Assessment]</span>
+                    </div>
+                    <div class="input-line" style="margin-top: 8px;">
+                        <span class="output"><span class="highlight">Chief Complaint:</span> chest pain radiating to left arm</span>
+                    </div>
+                    <div class="input-line">
+                        <span class="output"><span class="highlight">Noted:</span> elevated HR (110 bpm), fever (39.2°C), acute onset</span>
+                    </div>
+                    <div class="input-line">
+                        <span class="output">at rest, classic cardiac presentation with radiation pattern</span>
+                    </div>
+                    <div class="input-line">
+                        <span class="output"><span class="highlight">Active Protocol:</span> 🫀 Cardiology Protocol</span>
+                    </div>
+                    <div class="input-line" style="margin-top: 8px;">
+                        <span class="success"><span class="highlight">Recommendation:</span> URGENT cardiology evaluation.</span>
+                    </div>
+                    <div class="input-line">
+                        <span class="success">Consider troponin, ECG, cardiac imaging. Monitor closely.</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="separator"></div>
+
+            <div class="box" style="background: #0a0e13; border-color: #4fb3d9;">
+                <div style="color: #28c940; font-weight: bold; margin-bottom: 8px;">📊 Compression Summary</div>
+                <div class="input-line">
+                    <span class="info">Raw Clinical Text:</span>
+                    <span class="highlight">450 tokens</span>
+                </div>
+                <div class="input-line">
+                    <span class="info">Compressed JSON:</span>
+                    <span class="highlight">35 tokens</span>
+                </div>
+                <div class="input-line">
+                    <span class="info">Token Reduction:</span>
+                    <span class="success">92.2% (13.3x smaller)</span>
+                </div>
+                <div class="input-line">
+                    <span class="info">Cost Savings:</span>
+                    <span class="success">$0.015 → $0.001</span>
+                </div>
+            </div>
+
+            <div style="margin-top: 16px; color: #28c940; font-weight: bold;">
+✅ All systems nominal
+            </div>
+
+            <div class="input-line" style="margin-top: 16px;">
+                <span class="prompt">➜</span>
+                <span class="cursor">█</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
