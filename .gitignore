@@ -19,11 +19,21 @@ showcase/node_modules/
 showcase/.next/
 showcase/.env.local
 showcase/.env.local.example
+showcase/.gitignore
 showcase/out/
 showcase/dist/
 showcase/build/
 showcase/package-lock.json
 showcase/tsconfig.tsbuildinfo
+showcase/next-env.d.ts
+showcase/.vercel/
+showcase/dev.log
+showcase/server.log
+showcase/videos/
+showcase/e2e/
+showcase/quick-record.js
+showcase/record-video.js
+showcase/record-with-server.js
 
 # IDE
 .vscode/
@@ -67,6 +77,4 @@ coverage/
 requirements-ml.txt
 medgemma_dashboard.png
 mcp_config.json
-showcase/videos/
-showcase/e2e/
 tests/e2e/
