@@ -72,6 +72,8 @@ coverage/
 *.bat
 *.sh
 !deploy.sh
+!setup_dev.sh
+!cleanup_branches.sh
 
 # Project-specific
 requirements-ml.txt
