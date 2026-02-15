@@ -482,6 +482,24 @@ To record terminal sessions for documentation and demos, install **terminalizer*
 npm install -g terminalizer
 ```
 
+**Note:** Terminalizer may have compatibility issues with Node.js 18+. If you encounter installation errors:
+- Use Node.js version 16 (LTS), or
+- Use alternative tools like [asciinema](https://asciinema.org/) (`pip install asciinema`)
+
+### Alternative: Using asciinema
+
+If terminalizer installation fails, you can use asciinema instead:
+
+```bash
+# Install asciinema (Python-based, no Node.js required)
+pip install asciinema
+
+# Record a demo
+asciinema rec demo.cast
+
+# Upload to asciinema.org or convert to GIF
+```
+
 ### Recording a CLI Demo
 
 Once terminalizer is installed, you can record the CLI demo:
@@ -510,8 +528,8 @@ The recording will be saved as `demo_cli_recording.yml` (editable config) and ca
 
 ### Prerequisites for Recording
 
-- **Node.js** and **npm** (for terminalizer)
-- **Python 3.12+** (for running the demos)
+- **Node.js 16** and **npm** (for terminalizer), or
+- **Python 3.12+** and **pip** (for asciinema alternative)
 
 ---
 

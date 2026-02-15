@@ -47,15 +47,24 @@ else
     
     # Install terminalizer
     echo "Installing terminalizer for terminal recording..."
-    if npm install -g terminalizer; then
+    echo "(Note: terminalizer may have compatibility issues with Node.js 18+)"
+    echo ""
+    if npm install -g terminalizer 2>&1; then
         echo "✅ Terminalizer installed successfully"
         echo ""
         echo "You can now record terminal demos with:"
         echo "  terminalizer record demo_name"
         echo "  terminalizer render demo_name"
     else
-        echo "⚠️  Failed to install terminalizer globally."
-        echo "You may need to run with sudo: sudo npm install -g terminalizer"
+        echo ""
+        echo "⚠️  Terminalizer installation failed."
+        echo "This is often due to Node.js version compatibility (requires Node 16)."
+        echo ""
+        echo "Alternative: Install asciinema (Python-based):"
+        echo "  pip install asciinema"
+        echo "  asciinema rec demo.cast"
+        echo ""
+        echo "You can continue without terminalizer. Python dependencies are installed."
     fi
 fi
 
