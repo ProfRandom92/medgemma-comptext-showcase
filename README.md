@@ -34,6 +34,7 @@
 - [🚀 Quick Start](#-quick-start)
 - [📊 Streamlit Dashboard](#-streamlit-dashboard)
 - [🖥 CLI Demo](#-cli-demo)
+- [🛠️ Development Setup](#️-development-setup)
 - [📁 Project Structure](#-project-structure)
 - [🧪 Tier 1 CRITICAL Tests](#-tier-1-critical-tests)
 - [🔧 Technical Details](#-technical-details)
@@ -382,6 +383,14 @@ streamlit run dashboard.py
 python -m pytest tests/unit/ -v
 ```
 
+**For developers:** Use the automated setup script to install all dependencies including development tools:
+
+```bash
+./setup_dev.sh
+```
+
+This will install Python dependencies and optionally set up terminalizer for recording terminal demos.
+
 ### Example Input
 
 ```
@@ -459,6 +468,68 @@ python demo_cli.py
 - 📦 **Formatted JSON Output** — Full compressed patient state with syntax highlighting
 - 👨‍⚕️ **Doctor Agent Response** — LLM-powered clinical recommendation
 - 📈 **Compression Summary** — Cost savings ($0.015 → $0.001) and reduction percentage
+
+---
+
+## 🛠️ Development Setup
+
+### Recording Terminal Demos
+
+To record terminal sessions for documentation and demos, install **terminalizer**:
+
+```bash
+# Install terminalizer globally via npm
+npm install -g terminalizer
+```
+
+**Note:** Terminalizer may have compatibility issues with Node.js 18+. If you encounter installation errors:
+- Use Node.js version 16 or 20 (LTS versions - note that Node.js 16 reached end-of-life in Sept 2023), or
+- Use alternative tools like [asciinema](https://asciinema.org/) (`pip install asciinema`)
+
+### Alternative: Using asciinema
+
+If terminalizer installation fails, you can use asciinema instead:
+
+```bash
+# Install asciinema (Python-based, no Node.js required)
+pip install asciinema
+
+# Record a demo
+asciinema rec demo.cast
+
+# Upload to asciinema.org or convert to GIF
+```
+
+### Recording a CLI Demo
+
+Once terminalizer is installed, you can record the CLI demo:
+
+```bash
+# Start recording
+terminalizer record demo_cli_recording
+
+# This will start a new shell session. Run your demo:
+python demo_cli.py
+# (interact with the demo as needed)
+
+# Exit the shell when done (Ctrl+D or type 'exit')
+exit
+
+# Render the recording as an animated GIF
+terminalizer render demo_cli_recording
+```
+
+The recording will be saved as `demo_cli_recording.yml` (editable config) and can be rendered to `demo_cli_recording.gif`.
+
+**Terminalizer Configuration:**
+- Edit `demo_cli_recording.yml` to adjust playback speed, dimensions, or styling
+- Default theme: `monokai`
+- Recommended dimensions: `cols: 100, rows: 30`
+
+### Prerequisites for Recording
+
+- **Node.js 16 or 20 (LTS)** and **npm** (for terminalizer), or
+- **Python 3.12+** and **pip** (for asciinema alternative)
 
 ---
 
