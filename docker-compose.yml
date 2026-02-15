@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  # Backend: FastAPI
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: medgemma-api
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - LOG_LEVEL=info
+    volumes:
+      - ./src:/app/src
+      - ./api:/app/api
+    command: python -m uvicorn api.main:app --host 0.0.0.0 --port 8000 --reload
+    networks:
+      - medgemma-network
+
+  # Frontend: Next.js
+  web:
+    build:
+      context: ./showcase
+      dockerfile: Dockerfile
+    container_name: medgemma-web
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://api:8000/api
+    depends_on:
+      - api
+    networks:
+      - medgemma-network
+
+networks:
+  medgemma-network:
+    driver: bridge

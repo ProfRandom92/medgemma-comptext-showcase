@@ -1,0 +1,62 @@
+# MedGemma × CompText - Fly.io Production Configuration
+app = "medgemma-api"
+primary_region = "iad"
+
+[build]
+  dockerfile = "Dockerfile.api"
+  builder = "docker"
+
+[env]
+  PYTHONUNBUFFERED = "1"
+  PYTHONDONTWRITEBYTECODE = "1"
+  API_ENV = "production"
+  LOG_LEVEL = "info"
+  RATE_LIMIT_REQUESTS = "1000"
+  RATE_LIMIT_WINDOW = "3600"
+
+# VM configuration for edge compute
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory_mb = 1024
+
+[[services]]
+  internal_port = 8000
+  protocol = "tcp"
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 1
+  processes = ["app"]
+
+  [[services.ports]]
+    port = 80
+    handlers = ["http"]
+    force_https = true
+
+  [[services.ports]]
+    port = 443
+    handlers = ["tls", "http"]
+
+  # HTTP health check for load balancer
+  [[services.http_checks]]
+    grace_period = "10s"
+    interval = "10s"
+    timeout = "5s"
+    method = "GET"
+    path = "/health"
+    protocol = "http"
+    tls_skip_verify = false
+    headers = { }
+
+  # Restart policy
+  auto_stop_machines = true
+  auto_start_machines = true
+
+[deploy]
+  strategy = "rolling"
+  wait_timeout = "5m"
+  max_unavailable = 1
+
+# Monitoring and metrics
+[metrics]
+  port = 9090
