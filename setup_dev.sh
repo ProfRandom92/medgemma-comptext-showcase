@@ -49,7 +49,7 @@ else
     echo "Installing terminalizer for terminal recording..."
     echo "(Note: terminalizer may have compatibility issues with Node.js 18+)"
     echo ""
-    if npm install -g terminalizer 2>&1; then
+    if npm install -g terminalizer; then
         echo "✅ Terminalizer installed successfully"
         echo ""
         echo "You can now record terminal demos with:"

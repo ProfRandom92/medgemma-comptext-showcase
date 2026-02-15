@@ -483,7 +483,7 @@ npm install -g terminalizer
 ```
 
 **Note:** Terminalizer may have compatibility issues with Node.js 18+. If you encounter installation errors:
-- Use Node.js version 16 (LTS), or
+- Use Node.js version 16 or 20 (LTS versions - note that Node.js 16 reached end-of-life in Sept 2023), or
 - Use alternative tools like [asciinema](https://asciinema.org/) (`pip install asciinema`)
 
 ### Alternative: Using asciinema
@@ -528,7 +528,7 @@ The recording will be saved as `demo_cli_recording.yml` (editable config) and ca
 
 ### Prerequisites for Recording
 
-- **Node.js 16** and **npm** (for terminalizer), or
+- **Node.js 16 or 20 (LTS)** and **npm** (for terminalizer), or
 - **Python 3.12+** and **pip** (for asciinema alternative)
 
 ---
