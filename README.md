@@ -9,7 +9,7 @@
 [![Tests](https://img.shields.io/badge/Tests-33%20passed-brightgreen?logo=pytest&logoColor=white)](#-tier-1-critical-tests)
 [![Streamlit](https://img.shields.io/badge/Dashboard-Streamlit-FF4B4B?logo=streamlit&logoColor=white)](#-streamlit-dashboard)
 [![KVTC](https://img.shields.io/badge/KVTC-Sandwich%20Strategy-8A2BE2)](#-the-secret-sauce-kvtc-sandwich-strategy)
-[![Token Reduction](https://img.shields.io/badge/Token%20Reduction-92-95%25-blueviolet)](#-power-of-comptext)
+[![Token Reduction](https://img.shields.io/badge/Token%20Reduction-92--95%25-blueviolet)](#-power-of-comptext)
 [![License: Challenge](https://img.shields.io/badge/License-MedGemma%20Challenge-orange)](#-license)
 
 <br>
