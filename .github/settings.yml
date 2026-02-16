@@ -1,33 +1,50 @@
-# GitHub Repository Settings — managed by probot/settings
-# https://github.com/probot/settings
-
 repository:
-  # About — short description shown in the repository sidebar
-  description: "🏥 MedGemma × CompText — Privacy-first clinical text compression for Healthcare AI. Multi-agent pipeline (Nurse → Triage → Doctor) with modular Codex routing across 4 medical domains. Achieves 94% token reduction while keeping data on-device. Built for the MedGemma Impact Challenge."
-
-  # Website
-  homepage: ""
-
-  # Topics (appear as badges below the description)
-  topics:
-    - medgemma
-    - healthcare-ai
-    - clinical-nlp
-    - multi-agent-system
-    - text-compression
-    - privacy-first
-    - pydantic
-    - streamlit
-    - edge-computing
-    - medical-informatics
-    - kaggle-competition
-    - python
-    - triage
-    - ehr
-
-  # Visibility
+  name: medgemma-comptext-showcase
+  description: 94% Token Reduction with Privacy-First Architecture - MedGemma Impact Challenge
+  homepage: https://github.com/ProfRandom92/medgemma-comptext-showcase
   private: false
   has_issues: true
-  has_projects: false
+  has_projects: true
   has_wiki: false
   has_downloads: true
+  is_template: false
+  
+  # Merge settings - STRICT ENFORCEMENT
+  allow_squash_merge: true
+  allow_merge_commit: false
+  allow_rebase_merge: false
+  delete_branch_on_merge: true
+  auto_merge_enabled: false
+  
+  # Branch protection
+  enforce_admins: true
+  require_status_checks_to_pass_before_merge: true
+  require_code_reviews: true
+  require_last_push_approval: false
+  dismiss_stale_pull_request_approvals: true
+  require_signed_commits: false
+  required_status_checks:
+    - "CI Pipeline"
+  minimum_approving_review_count: 1
+  
+  # Issue templates
+  issues_template: null
+  pull_request_template: null
+  
+  # Vulnerability & security
+  vulnerability_alerts: true
+  enable_automated_security_fixes: true
+  web_commit_signoff_required: false
+
+branches:
+  - name: main
+    protection:
+      required_status_checks:
+        strict: true
+        contexts:
+          - "CI Pipeline"
+      enforce_admins: true
+      require_code_reviews: true
+      minimum_approving_review_count: 1
+      dismiss_stale_pull_request_approvals: true
+      restrictions: null
