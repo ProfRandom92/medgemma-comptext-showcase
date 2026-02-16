@@ -76,13 +76,21 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# CORS configuration
+# CORS configuration - Production Security
+# Only allow specific origins (Vercel + Fly.io)
+ALLOWED_ORIGINS = [
+    "https://medgemma-comptext-showcase.vercel.app",
+    "https://medgemma-api.fly.dev",
+    "http://localhost:3000",  # Development only
+    "http://localhost:8000",  # Development only
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=ALLOWED_ORIGINS,
+    allow_credentials=False,  # Security: Set to True only if authentication needed
+    allow_methods=["GET", "POST"],  # Explicit methods only
+    allow_headers=["Content-Type", "Authorization"],  # Explicit headers only
 )
 
 
