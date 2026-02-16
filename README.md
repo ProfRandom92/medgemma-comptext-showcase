@@ -5,6 +5,7 @@
 ### The 'Zip-File' for Clinical AI Context
 **94% Token Reduction · Privacy-First · Edge-Native**
 
+![CI](https://github.com/ProfRandom92/medgemma-comptext-showcase/actions/workflows/comptext-ci.yml/badge.svg)
 [![Python 3.12+](https://img.shields.io/badge/Python-3.12%2B-3776AB?logo=python&logoColor=white)](https://python.org)
 [![Tests](https://img.shields.io/badge/Tests-33%20passed-brightgreen?logo=pytest&logoColor=white)](#-tier-1-critical-tests)
 [![Streamlit](https://img.shields.io/badge/Dashboard-Streamlit-FF4B4B?logo=streamlit&logoColor=white)](#-streamlit-dashboard)
@@ -577,6 +578,6 @@ python demo_future.py
 
 ---
 
-## 📄 License
+## 📄 License & Kaggle Compliance
 
-This project is provided for the **MedGemma Impact Challenge** evaluation only.
+This repository is a submission for the MedGemma Impact Challenge. Code is licensed under Apache 2.0. Model weights/outputs are licensed under CC BY 4.0.
