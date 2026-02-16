@@ -68,7 +68,7 @@ coverage/
 .benchmarks/
 
 # CI/CD
-.github/workflows/
+# NOTE: .github/workflows/ MUST be tracked (contains production CI/CD pipelines)
 *.bat
 *.sh
 !deploy.sh
