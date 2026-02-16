@@ -8,6 +8,8 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
 
@@ -23,5 +25,5 @@ jobs:
 
       - name: Run Critical Tests
         env:
-          PYTHONPATH: .
+          PYTHONPATH: ${{ github.workspace }}
         run: pytest tests/unit/ --maxfail=1 -v --no-header --override-ini="addopts=" --override-ini="timeout=0"
