@@ -439,17 +439,16 @@ async def process_clinical_text(
         total_time = (time.time() - total_start) * 1000
         
         # Build compression data
+        vitals_json = compressed_json.get('vitals', {})
+        medication_str = compressed_json.get('medication')
         compression_data = CompressionData(
             chief_complaint=compressed_json.get('chief_complaint'),
             vital_signs=VitalSigns(
-                heart_rate=compressed_json.get('vital_signs', {}).get('heart_rate'),
-                blood_pressure=compressed_json.get('vital_signs', {}).get('blood_pressure'),
-                temperature=compressed_json.get('vital_signs', {}).get('temperature'),
-                respiratory_rate=compressed_json.get('vital_signs', {}).get('respiratory_rate')
+                heart_rate=vitals_json.get('hr'),
+                blood_pressure=vitals_json.get('bp'),
+                temperature=vitals_json.get('temp'),
             ),
-            symptoms=compressed_json.get('symptoms', []),
-            medications=compressed_json.get('medications', []),
-            oxygen=compressed_json.get('oxygen')
+            medications=[medication_str] if medication_str else [],
         )
         
         # Build response
