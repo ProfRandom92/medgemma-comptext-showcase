@@ -2,6 +2,7 @@ rich
 pydantic
 requests
 pytest
+psutil
 streamlit
 tiktoken
 watchdog
