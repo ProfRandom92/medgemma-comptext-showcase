@@ -7,7 +7,7 @@
 
 ![CI](https://github.com/ProfRandom92/medgemma-comptext-showcase/actions/workflows/comptext-ci.yml/badge.svg)
 [![Python 3.12+](https://img.shields.io/badge/Python-3.12%2B-3776AB?logo=python&logoColor=white)](https://python.org)
-[![Tests](https://img.shields.io/badge/Tests-53%20CRITICAL%20%2B%20E2E-brightgreen?logo=pytest&logoColor=white)](#-tier-1-critical-tests)
+[![Tests](https://img.shields.io/badge/Tests-185%20PASSED-brightgreen?logo=pytest&logoColor=white)](#-tier-1-critical-tests)
 [![Streamlit](https://img.shields.io/badge/Dashboard-Streamlit-FF4B4B?logo=streamlit&logoColor=white)](#-streamlit-dashboard)
 [![KVTC](https://img.shields.io/badge/KVTC-Sandwich%20Strategy-8A2BE2)](#-the-secret-sauce-kvtc-sandwich-strategy)
 [![Token Reduction](https://img.shields.io/badge/Token%20Reduction-92--95%25-blueviolet)](#-power-of-comptext)
@@ -503,7 +503,7 @@ medgemma-comptext-showcase/
 
 ## 🧪 Tier 1 CRITICAL Tests
 
-### Current Status: ✅ **33/33 PASSING (100% Success)**
+### Current Status: ✅ **185/185 PASSING (100% Success)**
 
 The **Tier 1 CRITICAL test suite** covers the 10 most critical gaps for production readiness:
 
