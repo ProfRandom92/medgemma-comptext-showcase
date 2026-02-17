@@ -9,7 +9,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies into user directory
-COPY requirements.txt api/requirements.txt ./
+COPY requirements.txt ./
+COPY api/requirements.txt ./api/
 RUN pip install --user --no-cache-dir -r requirements.txt -r api/requirements.txt
 
 # Runtime stage
