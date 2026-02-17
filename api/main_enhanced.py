@@ -23,7 +23,7 @@ import uvicorn
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from src.agents.nurse_agent import NurseAgent
-from src.agents.triage_agent import TriageAgent
+from src.agents.triage_agent import TriageAgent, TriageResult
 from src.agents.doctor_agent import DoctorAgent
 from src.core.models import PatientState
 
@@ -425,22 +425,9 @@ async def process_clinical_text(
         
         # ===== STAGE 2: TRIAGE =====
         triage_start = time.time()
-        triage_string = triage_agent.assess(patient_state)
+        triage_result = triage_agent.triage(patient_state)
         triage_time = (time.time() - triage_start) * 1000
-        # Parse triage string: "🔴 P1 - CRITICAL" -> extract priority
-        triage_parts = triage_string.split(' - ')
-        priority_with_emoji = triage_parts[0].strip()  # "🔴 P1"
-        priority_name = triage_parts[1].strip() if len(triage_parts) > 1 else "UNKNOWN"
-        priority_level = priority_with_emoji.split()[-1]  # "P1"
-        triage_result = {
-            'priority_level': priority_level,
-            'priority_name': priority_name,
-            'reason': triage_string,
-            'confidence': 0.90,
-            'escalation_indicators': [],
-            'differential': []
-        }
-        logger.info(f"[{request_id}] Triage: {priority_level} - {priority_name}")
+        logger.info(f"[{request_id}] Triage: {triage_result.priority_level} - {triage_result.priority_name}")
         
         # ===== STAGE 3: DIAGNOSIS =====
         diagnosis_start = time.time()
@@ -481,17 +468,17 @@ async def process_clinical_text(
                 compressed_data=compression_data
             ),
             triage=TriageResponse(
-                priority_level=triage_result['priority_level'],
-                priority_name=triage_result['priority_name'],
-                confidence=triage_result.get('confidence', 0.90),
-                reason=triage_result['reason'],
-                escalation_indicators=triage_result.get('escalation_indicators', []),
+                priority_level=triage_result.priority_level,
+                priority_name=triage_result.priority_name,
+                confidence=triage_result.confidence,
+                reason=triage_result.display,
+                escalation_indicators=[],
                 triage_time_ms=round(triage_time, 2)
             ),
             diagnosis=DiagnosisResponse(
                 primary_assessment=doctor_recommendation,
-                differential=triage_result.get('differential', []),
-                recommendations=triage_result.get('recommendations', []),
+                differential=[],
+                recommendations=[],
                 model_version="MedGemma-v5",
                 processing_time_ms=round(diagnosis_time, 2)
             ),
