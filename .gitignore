@@ -23,7 +23,6 @@ showcase/.gitignore
 showcase/out/
 showcase/dist/
 showcase/build/
-showcase/package-lock.json
 showcase/tsconfig.tsbuildinfo
 showcase/next-env.d.ts
 showcase/.vercel/
