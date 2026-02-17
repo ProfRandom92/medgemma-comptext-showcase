@@ -365,6 +365,7 @@ class TestCompressionEdgeCases:
         assert result is not None
         assert result.vitals.hr == 125
         assert result.vitals.bp == "95/60"
+        assert result.vitals.temp == 39.8
 
     def test_clinical_note_with_abbreviations_and_acronyms(self):
         """[Test] Clinical note heavy with medical abbreviations"""
