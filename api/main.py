@@ -127,7 +127,34 @@ async def process_patient_case(request: ProcessRequest):
         reduction_percentage = ((original_tokens - compressed_tokens) / original_tokens * 100)
 
         # Step 2: Triage Assessment
-        triage_result = triage_agent.assess(patient_state)
+        triage_result_str = triage_agent.assess(patient_state)
+        
+        # Parse triage result string: "🔴 P1 - CRITICAL" or "🟡 P2 - URGENT" or "🟢 P3 - STANDARD"
+        priority_level = "P3"
+        priority_name = "STANDARD"
+        reason = "Assessment complete"
+        
+        if "P1" in triage_result_str:
+            priority_level = "P1"
+        if "P2" in triage_result_str:
+            priority_level = "P2"
+        if "CRITICAL" in triage_result_str:
+            priority_name = "CRITICAL"
+        elif "URGENT" in triage_result_str:
+            priority_name = "URGENT"
+        
+        # Determine reason based on patient state
+        if patient_state.vitals.hr and patient_state.vitals.hr > 120:
+            reason = "Elevated heart rate indicating critical status"
+        elif patient_state.vitals.temp and patient_state.vitals.temp > 39.0:
+            reason = "High fever requiring urgent attention"
+        elif patient_state.vitals.bp:
+            try:
+                systolic = int(patient_state.vitals.bp.split("/")[0])
+                if systolic > 160:
+                    reason = "Elevated blood pressure indicating critical status"
+            except (ValueError, IndexError):
+                pass
 
         # Step 3: Doctor Recommendation
         doctor_start = time.time()
@@ -147,9 +174,9 @@ async def process_patient_case(request: ProcessRequest):
                 compression_time_ms=compression_time,
             ),
             triage=TriageResponse(
-                priority_level=triage_result["priority_level"],
-                priority_name=triage_result["priority_name"],
-                reason=triage_result["reason"],
+                priority_level=priority_level,
+                priority_name=priority_name,
+                reason=reason,
             ),
             doctor=DoctorResponse(
                 recommendation=doctor_recommendation,
