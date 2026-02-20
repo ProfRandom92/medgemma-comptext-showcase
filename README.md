@@ -27,7 +27,7 @@ By implementing a strategy inspired by recent KV-Cache optimization research (e.
 
 > *Disclaimer: The 'KVTC' (Key-Value Text Compression) naming in this project is inspired by recent KV-Cache optimization research, implemented here as a custom, application-layer protocol strictly optimized for clinical text safety.*
 
-![MedGemma x CompText v5 Architecture](assets/9953.png)
+![MedGemma x CompText v5 Architecture](IMG-20260220-WA0016.jpg)
 
 ---
 
@@ -48,7 +48,7 @@ Inspired by recent KV-cache optimization research, our protocol applies the "San
 ### Layer 3: Structured Output & Serialization
 The final step serializes the compressed data into a lightweight JSON structure, appending a lightweight MD5 checksum for cache validation and integrity verification. This ensures the payload is perfectly structured for the LLM without claiming false cryptographic security for the cache keys.
 
-![KVTC Strategy Mindmap](assets/1000063072.jpg)
+![KVTC Strategy Mindmap](IMG-20260220-WA0015.jpg)
 
 ### Core Implementation (`apply_sandwich`)
 ```python
