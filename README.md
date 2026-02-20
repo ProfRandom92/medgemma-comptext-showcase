@@ -5,7 +5,7 @@
 
 **94% Token Reduction · Privacy-First · True Edge-Native**
 
-![CI](https://github.com/ProfRandom92/medgemma-comptext-showcase/actions/workflows/comptext-ci.yml/badge.svg)
+![CI](https://github.com/ProfRandom92/medgemma-comptext/actions/workflows/comptext-ci.yml/badge.svg)
 [![Python 3.12+](https://img.shields.io/badge/Python-3.12%2B-3776AB?logo=python&logoColor=white)](https://python.org)
 [![Tests](https://img.shields.io/badge/Tests-185%20PASSED-brightgreen?logo=pytest&logoColor=white)](#-tier-1-critical-tests)
 [![Streamlit](https://img.shields.io/badge/Dashboard-Streamlit-FF4B4B?logo=streamlit&logoColor=white)](#-streamlit-dashboard)
