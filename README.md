@@ -1,4 +1,3 @@
-```markdown
 <div align="center">
 
 # 🏥 MedGemma 1.5 × PaliGemma × CompText v5
