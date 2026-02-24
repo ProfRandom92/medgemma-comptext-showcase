@@ -65,9 +65,7 @@ jobs:
         run: |
           DEPLOYMENT_URL="https://${{ steps.deploy.outputs.deployment_url }}"
           echo "Testing health endpoint: $DEPLOYMENT_URL/health"
-          curl -sSf "$DEPLOYMENT_URL/health" -w "
-Status: %{http_code}
-" || echo "Health check still initializing..."
+          curl -sSf "$DEPLOYMENT_URL/health" -w "\nStatus: %{http_code}\n" || echo "Health check still initializing..."
 
       - name: Check deployment logs
         if: failure()
@@ -88,9 +86,5 @@ Status: %{http_code}
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `${emoji} Backend deployment to Fly.io: ${status}
-
-API URL: https://${{ steps.deploy.outputs.deployment_url }}
-
-Update frontend with: `NEXT_PUBLIC_API_URL=https://${{ steps.deploy.outputs.deployment_url }}``
+              body: `${emoji} Backend deployment to Fly.io: ${status}\n\nAPI URL: https://${{ steps.deploy.outputs.deployment_url }}\n\nUpdate frontend with: \`NEXT_PUBLIC_API_URL=https://${{ steps.deploy.outputs.deployment_url }}\``
             })
