@@ -55,11 +55,7 @@ jobs:
 
       - name: Get deployment URL
         id: deploy
-        run: |
-          URL=$(flyctl info --app ${{ env.FLY_APP_NAME }} --json | jq -r '.hostname')
-          echo "deployment_url=$URL" >> $GITHUB_OUTPUT
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: echo "deployment_url=medgemma-api.fly.dev" > $GITHUB_OUTPUT
 
       - name: Verify deployment - Health check
         run: |
