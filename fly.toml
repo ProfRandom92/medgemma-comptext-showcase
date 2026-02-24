@@ -1,4 +1,5 @@
 # MedGemma × CompText - Fly.io Production Configuration
+# Trigger deploy workflow
 app = "medgemma-api"
 primary_region = "iad"
 
