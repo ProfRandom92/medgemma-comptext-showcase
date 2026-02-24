@@ -165,7 +165,7 @@ Medgemma-CompText/
 
 ---
 
-## 📄 License & Kaggle Compliance
+## 📄 License & Kaggle Compliance 
 
 This repository is a submission for the MedGemma Impact Challenge. Code is licensed under Apache 2.0. Model usage is subject to Google MedGemma and PaliGemma license terms.
 ```
