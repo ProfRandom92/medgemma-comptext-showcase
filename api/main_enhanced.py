@@ -398,6 +398,15 @@ async def process_clinical_text(
     Compression: 92-95% token reduction
     """
     try:
+        # Initialize agents if not already initialized (handles TestClient case)
+        global nurse_agent, triage_agent, doctor_agent
+        if nurse_agent is None:
+            nurse_agent = NurseAgent()
+        if triage_agent is None:
+            triage_agent = TriageAgent()
+        if doctor_agent is None:
+            doctor_agent = DoctorAgent()
+        
         # Rate limiting
         await check_rate_limit(request)
         
